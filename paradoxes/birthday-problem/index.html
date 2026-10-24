@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Birthday Problem · Paradox Lab</title>
+    <meta name="description" content="How many people do you need before two probably share a birthday? Live probability curve and Monte Carlo simulation." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="birthday-problem">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          A year has 365 days. Gather people in a room one by one: how many do you need before there’s a
+          better-than-even chance that <em>some</em> two of them share a birthday? With 365 possible days, it feels
+          like you’d need a crowd in the hundreds, or at least half of 365. The real answer is small enough that most
+          school classes have a shared birthday hiding in them.
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="23" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>How many people for a 50% chance of a shared birthday?</legend>
+            <div class="guess-options">
+              <label class="guess-option"><input type="radio" name="guess" value="23" /> <span>About 23</span></label>
+              <label class="guess-option" data-feedback="That’s the answer to a different question: someone sharing YOUR birthday."><input type="radio" name="guess" value="253" /> <span>About 253</span></label>
+              <label class="guess-option" data-feedback="Half of 365 is the most common intuition, but it’s off by a factor of eight."><input type="radio" name="guess" value="183" /> <span>About 183, half of 365</span></label>
+              <label class="guess-option" data-feedback="You only need certainty at 366, but 50% comes far sooner."><input type="radio" name="guess" value="366" /> <span>366: you can never be sure before that</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>Just <strong>23 people</strong> give a 50.7% chance. With 70 people it’s 99.9%.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <label class="field">
+              <span class="field-label">People in the room <output id="n-out" for="n"></output></span>
+              <input id="n" type="range" min="1" max="100" step="1" value="23" />
+            </label>
+            <div class="stats" id="stats" aria-live="polite"></div>
+            <div class="viz" id="curve"></div>
+            <p class="viz-caption">
+              The exact probability (solid) rises far faster than the chance that someone matches <em>your</em> birthday
+              (dashed), because every pair of people is a chance for a match.
+            </p>
+          </div>
+
+          <div class="card lab-panel" aria-labelledby="mc-h">
+            <h3 id="mc-h">Monte Carlo check</h3>
+            <p style="margin: 0">Don’t trust the formula? Draw random groups of this size and count how often a birthday repeats.</p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="sample-one">Sample one group</button>
+              <button type="button" class="btn" data-mc="1000">Run 1,000 groups</button>
+              <button type="button" class="btn" data-mc="10000">Run 10,000 groups</button>
+            </div>
+            <p id="sample-summary" class="sample-summary" aria-live="polite"></p>
+            <div class="viz calendar-wrap">
+              <div class="calendar" id="calendar" aria-hidden="true"></div>
+            </div>
+            <div class="stats" id="mc-stats" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>Count the chance of no match</h3>
+          <p>
+            It’s easier to compute the probability that all \(n\) birthdays are <em>different</em>. The first person can
+            have any birthday; the second must avoid one day, the third must avoid two, and so on:
+          </p>
+          $$P(\text{no match}) = \frac{365}{365}\cdot\frac{364}{365}\cdot\frac{363}{365}\cdots\frac{365-n+1}{365} = \prod_{k=0}^{n-1}\left(1-\frac{k}{365}\right).$$
+          $$P(\text{at least one match}) = 1 - \prod_{k=0}^{n-1}\left(1-\frac{k}{365}\right).$$
+          <p>For \(n = 23\) this gives \(1 - 0.4927 \approx 0.507\).</p>
+
+          <h3>Pairs, not people</h3>
+          <p>
+            Intuition asks “will someone match <em>me</em>?”, which has only \(n-1\) chances. But a match can happen
+            between <em>any</em> two people, and the number of pairs grows quadratically:
+          </p>
+          $$\binom{n}{2} = \frac{n(n-1)}{2}, \qquad \binom{23}{2} = 253.$$
+          <p>
+            Each pair matches with probability \(1/365\). Treating pairs as roughly independent gives a handy
+            approximation:
+          </p>
+          $$P(\text{match}) \approx 1 - e^{-n(n-1)/(2\cdot 365)} \quad\Longrightarrow\quad n \approx \sqrt{2\cdot 365\,\ln 2} \approx 22.5.$$
+          <p>
+            In general you need about \(\sqrt{d}\) items, not \(d/2\), before collisions among \(d\) possibilities
+            become likely. That same square root is why cryptographers worry about “birthday attacks” on hash
+            functions.
+          </p>
+
+          <h3>Why it’s veridical</h3>
+          <p>
+            The calculation is correct and the simulation agrees with it. Real birthdays aren’t perfectly uniform
+            (there are seasonal peaks), but that only makes matches <em>more</em> likely.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Birthday_problem">Birthday problem</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Birthday_attack">Birthday attack</a> <span class="src">· Wikipedia (the cryptography connection)</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Pigeonhole_principle">Pigeonhole principle</a> <span class="src">· Wikipedia (why 366 people guarantee a match)</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

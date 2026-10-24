@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Monty Hall Problem · Paradox Lab</title>
+    <meta name="description" content="Play the Monty Hall game and simulate thousands of rounds to see why switching wins 2/3 of the time." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="monty-hall">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          You’re on a game show facing three closed doors. Behind one is a car; behind the other two, goats. You pick a
+          door. The host, who knows where the car is, then opens one of the <em>other</em> doors to reveal a goat, and
+          offers you a choice: stick with your original door, or switch to the one remaining closed door. Two doors are
+          left, one car. Surely it’s a coin flip, so does switching make any difference?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="switch" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>What should you do?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="That’s what most people (including many mathematicians) said at first.">
+                <input type="radio" name="guess" value="same" /> <span>It doesn’t matter: two doors, so it’s 50/50.</span>
+              </label>
+              <label class="guess-option" data-feedback="Loyalty doesn’t pay here.">
+                <input type="radio" name="guess" value="stay" /> <span>Stay. Your first instinct is more likely right.</span>
+              </label>
+              <label class="guess-option">
+                <input type="radio" name="guess" value="switch" /> <span>Switch. It wins more often.</span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>Switching wins <strong>2/3</strong> of the time; staying wins only 1/3. Try it below, then run a few thousand simulated rounds.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel" aria-labelledby="game-h">
+            <div class="btn-row" style="justify-content: space-between">
+              <h3 id="game-h">Play the game</h3>
+              <div class="segmented" role="group" aria-label="Number of doors" data-doors>
+                <button type="button" data-value="3" aria-pressed="true">3 doors</button>
+                <button type="button" data-value="10" aria-pressed="false">10 doors</button>
+                <button type="button" data-value="100" aria-pressed="false">100 doors</button>
+              </div>
+            </div>
+            <p class="game-prompt" id="game-prompt" aria-live="polite"></p>
+            <div class="doors" id="doors" role="group" aria-labelledby="game-prompt"></div>
+            <div class="btn-row" id="game-actions"></div>
+            <div class="stats" id="game-stats"></div>
+          </div>
+
+          <div class="card lab-panel" aria-labelledby="sim-h">
+            <h3 id="sim-h">Simulate thousands of rounds</h3>
+            <p style="margin: 0">
+              Each simulated round picks a random door, lets the host open the others (never the car), and records
+              whether <em>staying</em> or <em>switching</em> would have won. Uses the door count chosen above.
+            </p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" data-run="100">Run 100</button>
+              <button type="button" class="btn" data-run="1000">Run 1,000</button>
+              <button type="button" class="btn" data-run="10000">Run 10,000</button>
+              <button type="button" class="btn btn-ghost" id="sim-reset">Reset</button>
+            </div>
+            <div class="stats" id="sim-stats" aria-live="polite"></div>
+            <div class="viz" id="sim-chart"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>Your first pick is stuck at 1/3</h3>
+          <p>
+            When you pick, the car is behind your door with probability \(1/3\) and behind one of the other two with
+            probability \(2/3\). The host’s reveal can’t change where the car already is. More importantly, it gives
+            you no information about <em>your</em> door: whatever you picked, he can always find a goat to show you.
+          </p>
+          $$P(\text{car behind your door} \mid \text{host opens a goat}) = P(\text{car behind your door}) = \tfrac{1}{3}.$$
+          <p>
+            Since the car must be behind one of the two closed doors, the other one gets everything else:
+          </p>
+          $$P(\text{win by switching}) = 1 - \tfrac{1}{3} = \tfrac{2}{3}.$$
+
+          <h3>Switching = taking both other doors</h3>
+          <p>
+            Another way to see it: switching is equivalent to being allowed to open <em>both</em> of the doors you
+            didn’t pick. The host just opened the empty one for you. Two doors beat one.
+          </p>
+
+          <h3>The 100-door version</h3>
+          <p>
+            With \(n\) doors, the host opens \(n-2\) goats and leaves one other door closed. Your original pick is
+            still right only \(1/n\) of the time, so switching wins
+          </p>
+          $$P(\text{switch wins}) = \frac{n-1}{n}.$$
+          <p>
+            With 100 doors, you picked door 37 and the host carefully avoided opening door 82 out of 98 others. Door 82
+            is now very suspicious: it is right 99% of the time.
+          </p>
+
+          <h3>The crucial assumption</h3>
+          <p>
+            The answer depends on the host <em>always</em> opening a goat door and <em>always</em> offering the switch.
+            If he opened a random door that just happened to show a goat, it really would be 50/50. That hidden rule is
+            why the puzzle fooled so many people when Marilyn vos Savant published it in 1990, but with the standard
+            rules, the 2/3 answer is simply correct.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Monty_Hall_problem">Monty Hall problem</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Conditional_probability">Conditional probability</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Bayes%27_theorem">Bayes’ theorem</a> <span class="src">· Wikipedia (the formal way to update on the host’s reveal)</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

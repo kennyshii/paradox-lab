@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zeno’s Dichotomy · Paradox Lab</title>
+    <meta name="description" content="To cross a room you must first cross half of it, then half the rest, forever. Watch an infinite series add up to a finite distance." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="zeno-dichotomy">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          Before you can walk across a room, you have to reach the halfway point. Before you can cover the rest, you
+          have to reach half of what remains: the three-quarter mark. Then seven-eighths, then fifteen-sixteenths, and
+          so on without end. That is infinitely many tasks, and you can’t complete infinitely many tasks one after
+          another. So, Zeno of Elea argued around 450 BC, you can never arrive. In fact, you can never even start.
+          Yet people cross rooms all the time. What’s wrong with the argument?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="converge" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>Where does the argument go wrong?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="Real space may or may not be grainy, but the paradox breaks even in a perfectly smooth world."><input type="radio" name="guess" value="discrete" /> <span>Space comes in tiny indivisible pixels, so the halving stops eventually.</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="converge" /> <span>Infinitely many steps can take a finite total time, because the steps keep shrinking.</span></label>
+              <label class="guess-option" data-feedback="Motion is real. The interesting part is explaining why the argument fails."><input type="radio" name="guess" value="illusion" /> <span>Nothing’s wrong: motion really is an illusion.</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>\(\tfrac12 + \tfrac14 + \tfrac18 + \cdots = 1\). The infinitely many stages fit inside a finite distance <em>and</em> a finite time, since each stage takes half as long as the one before.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="step">Next half-step →</button>
+              <button type="button" class="btn" id="play">▶ Auto-step</button>
+              <button type="button" class="btn" id="walk">🚶 Just walk across</button>
+              <button type="button" class="btn btn-ghost" id="reset">Reset</button>
+            </div>
+
+            <div>
+              <h3 class="track-title">The room</h3>
+              <div class="viz track" id="track"></div>
+            </div>
+            <div>
+              <h3 class="track-title">Zoomed into what’s left</h3>
+              <div class="viz track" id="zoom"></div>
+              <p class="viz-caption">Rescaled so the remaining gap always fills the width. It looks the same at every step, which is why the task <em>feels</em> endless.</p>
+            </div>
+
+            <div class="stats" id="stats" aria-live="polite"></div>
+
+            <div>
+              <div class="btn-row" style="justify-content: space-between">
+                <h3 style="margin: 0">Adding up the steps</h3>
+                <label class="check"><input type="checkbox" id="harmonic" /> Compare with \(1 + \tfrac12 + \tfrac13 + \cdots\)</label>
+              </div>
+              <div class="viz" id="chart" style="margin-top: 0.75rem"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>An infinite sum with a finite total</h3>
+          <p>After \(k\) stages you have covered</p>
+          $$S_k = \frac12 + \frac14 + \cdots + \frac1{2^k} = 1 - \frac1{2^k}.$$
+          <p>
+            No finite \(S_k\) reaches 1, but the gap \(2^{-k}\) can be made smaller than any distance you name. That is
+            precisely what it means for the infinite series to <em>converge</em> to 1:
+          </p>
+          $$\sum_{k=1}^{\infty} \frac1{2^k} = \lim_{k\to\infty} \left(1 - \frac1{2^k}\right) = 1.$$
+
+          <h3>Time shrinks too</h3>
+          <p>
+            Walking at a steady speed, each stage takes half the time of the one before. If crossing takes 10 seconds,
+            the stages take 5 s, 2.5 s, 1.25 s, …, and those add up to 10 s as well. Zeno’s hidden premise is that
+            infinitely many tasks must take infinitely long. That’s true only if each takes at least some fixed minimum
+            time, and these don’t.
+          </p>
+
+          <h3>Not every infinite sum converges</h3>
+          <p>
+            Shrinking terms aren’t enough on their own. The harmonic series \(1 + \tfrac12 + \tfrac13 + \cdots\) has
+            terms that shrink to zero, yet its partial sums grow without bound (roughly like \(\ln k\)). Zeno’s series
+            converges because its terms shrink <em>geometrically</em>. Tick the comparison box in the lab to see the
+            difference.
+          </p>
+
+          <h3>Why it’s falsidical</h3>
+          <p>
+            The argument relies on a premise that seems obvious but is false: that a sum of infinitely many positive
+            amounts must be infinite. The rigorous theory of limits, developed in the 19th century by Cauchy and
+            Weierstrass, shows exactly when infinite sums are finite. (Some philosophers argue a deeper puzzle remains,
+            about how one can “complete” an infinite sequence of acts, but the mathematical core is settled.)
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://plato.stanford.edu/entries/paradox-zeno/">Zeno’s Paradoxes</a> <span class="src">· Stanford Encyclopedia of Philosophy</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Zeno%27s_paradoxes">Zeno’s paradoxes</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Geometric_series">Geometric series</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Harmonic_series_(mathematics)">Harmonic series</a> <span class="src">· Wikipedia (a sum of shrinking terms that still diverges)</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

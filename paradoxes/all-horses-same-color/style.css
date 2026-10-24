@@ -1,0 +1,89 @@
+.horses-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+#herd {
+  width: 100%;
+  height: auto;
+}
+
+.proof-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.4rem;
+  counter-reset: step;
+}
+
+.proof-step button {
+  display: grid;
+  gap: 0.1rem;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.8rem;
+  cursor: pointer;
+}
+
+.step-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+.step-text {
+  font-size: 0.9rem;
+}
+
+.proof-step.is-done button {
+  border-left-color: var(--good);
+}
+
+.proof-step.is-current button {
+  border-color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.proof-step.is-broken button {
+  border-color: var(--bad);
+  border-left-color: var(--bad);
+  background: var(--bad-bg);
+}
+
+.dominoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.domino {
+  font: inherit;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--good);
+  background: var(--good-bg);
+  color: var(--good);
+  cursor: pointer;
+}
+
+.domino.is-broken {
+  border-color: var(--bad);
+  background: var(--bad-bg);
+  color: var(--bad);
+  transform: rotate(-8deg);
+}
+
+.domino.is-current {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}

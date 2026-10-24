@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Paradox Lab: play with famous paradoxes</title>
+    <meta name="description" content="Interactive visualizations of famous paradoxes: Monty Hall, the birthday problem, the missing square, the liar, Russell's paradox and more." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <script src="assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script type="module" src="assets/js/home.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <section class="home-hero" aria-labelledby="hero-title">
+        <p class="eyebrow">Interactive paradoxes</p>
+        <h1 id="hero-title">Arguments that feel wrong, and why.</h1>
+        <p class="lede">
+          Each paradox here is a small lab: make a guess, play with the idea, then see the math or logic that explains
+          what your intuition missed. Some are true, some are tricks, and some break logic itself.
+        </p>
+        <ul class="type-legend" aria-label="The three kinds of paradox">
+          <li data-type="veridical">
+            <span class="badge">Veridical</span>
+            <p><strong>Counterintuitive, but true.</strong> The conclusion sounds absurd, yet the argument is sound.</p>
+          </li>
+          <li data-type="falsidical">
+            <span class="badge">Falsidical</span>
+            <p><strong>Seems true, but has a hidden flaw.</strong> A convincing argument reaches a false conclusion.</p>
+          </li>
+          <li data-type="antinomy">
+            <span class="badge">Antinomy</span>
+            <p><strong>A genuine contradiction.</strong> Accepted rules of reasoning collide with each other.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section id="paradoxes" aria-labelledby="grid-title">
+        <div class="filter-bar">
+          <h2 id="grid-title">The paradoxes</h2>
+          <div class="segmented" role="group" aria-label="Filter by paradox type" data-filter>
+            <button type="button" data-value="all" aria-pressed="true">All</button>
+            <button type="button" data-value="veridical" aria-pressed="false">Veridical</button>
+            <button type="button" data-value="falsidical" aria-pressed="false">Falsidical</button>
+            <button type="button" data-value="antinomy" aria-pressed="false">Antinomy</button>
+          </div>
+        </div>
+        <p class="result-count" aria-live="polite" data-count></p>
+        <ul class="card-grid" data-grid></ul>
+        <noscript><p>The paradox list needs JavaScript. You can browse the <code>/paradoxes/</code> folders directly.</p></noscript>
+      </section>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

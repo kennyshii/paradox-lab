@@ -1,0 +1,153 @@
+.pill {
+  display: inline-block;
+  min-width: 2.6rem;
+  text-align: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.pill.is-yes {
+  background: var(--good-bg);
+  color: var(--good);
+}
+
+.pill.is-no {
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+
+.pill.is-unknown {
+  background: var(--antinomy-bg);
+  color: var(--antinomy);
+}
+
+.why-cell {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.toggle {
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.88rem;
+  min-width: 3.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.toggle[aria-pressed="true"] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+
+.village .barber-row th,
+.village .barber-row td {
+  background: var(--antinomy-bg);
+}
+
+.village td.is-clash .why-cell {
+  color: var(--bad);
+  font-weight: 600;
+}
+
+[data-suppose][aria-pressed="true"],
+[data-r][aria-pressed="true"] {
+  border-color: var(--bad);
+}
+
+.membership {
+  width: auto;
+}
+
+.membership th,
+.membership td {
+  text-align: center;
+  padding: 0.3rem;
+}
+
+.membership th[scope="row"] {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
+  padding-right: 0.8rem;
+}
+
+.membership .col-head {
+  font-family: var(--font-serif);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.cell {
+  display: inline-grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cell[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cell.is-static {
+  cursor: default;
+  background: var(--antinomy-bg);
+  border-color: transparent;
+  color: var(--antinomy);
+}
+
+.membership td.is-diag .cell {
+  box-shadow: 0 0 0 2px var(--antinomy);
+}
+
+.membership td.is-diff .cell {
+  box-shadow: 0 0 0 3px var(--bad);
+}
+
+.membership tr.is-highlight th[scope="row"] {
+  color: var(--bad);
+}
+
+.membership .r-row th,
+.membership .r-row td {
+  border-top: 2px solid var(--line-strong);
+}
+
+.membership td.is-paradox .cell {
+  background: var(--bad-bg);
+  color: var(--bad);
+  animation: flicker 1.2s steps(2, jump-none) infinite;
+}
+
+@keyframes flicker {
+  50% {
+    background: var(--good-bg);
+    color: var(--good);
+  }
+}
+
+.membership .muted {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-align: left;
+}

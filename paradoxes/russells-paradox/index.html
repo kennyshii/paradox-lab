@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Russell’s Paradox &amp; the Barber · Paradox Lab</title>
+    <meta name="description" content="Who shaves the barber? Explore the barber paradox and Russell's paradox with an interactive set-membership grid." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="russells-paradox">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          In a village, the barber shaves <em>all and only</em> the men who do not shave themselves. Does the barber
+          shave himself? If he does, he’s a man who shaves himself, so the barber must not shave him. If he doesn’t,
+          he’s a man who doesn’t shave himself, so the barber must shave him. Bertrand Russell found the same knot at
+          the foundations of mathematics: take the set \(R\) of all sets that are not members of themselves. Is \(R\)
+          a member of itself?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="neither" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>Is \(R = \{x : x \notin x\}\) a member of itself?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="Then R contains itself, so it breaks its own rule. Try it below."><input type="radio" name="guess" value="yes" /> <span>Yes, \(R \in R\)</span></label>
+              <label class="guess-option" data-feedback="Then R qualifies for membership, so R ∈ R after all. Try it below."><input type="radio" name="guess" value="no" /> <span>No, \(R \notin R\)</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="neither" /> <span>Both answers contradict themselves: \(R\) can’t exist.</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>\(R \in R \iff R \notin R\). Naive set theory, which lets any property define a set, is <strong>inconsistent</strong>. Modern set theory (ZFC) avoids it by restricting which sets you’re allowed to form.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="segmented" role="group" aria-label="Which version" data-tab>
+            <button type="button" data-value="barber" aria-pressed="true">The barber</button>
+            <button type="button" data-value="sets" aria-pressed="false">Russell’s sets</button>
+          </div>
+
+          <div class="card lab-panel" id="panel-barber">
+            <h3>Who shaves whom?</h3>
+            <p style="margin: 0">
+              The rule: <strong>the barber shaves exactly the men who don’t shave themselves.</strong> Toggle the
+              villagers’ habits; the barber’s column fills itself in. Then try to fill in the barber’s own row.
+            </p>
+            <div class="table-wrap"><table class="data village" id="village"></table></div>
+            <div class="btn-row" role="group" aria-label="Suppose about the barber">
+              <button type="button" class="btn" data-suppose="true">Suppose the barber shaves himself</button>
+              <button type="button" class="btn" data-suppose="false">Suppose he doesn’t</button>
+            </div>
+            <div id="barber-result" aria-live="polite"></div>
+          </div>
+
+          <div class="card lab-panel" id="panel-sets" hidden>
+            <h3>A tiny universe of sets</h3>
+            <p style="margin: 0">
+              Each row is a set; a ✓ in column \(S_j\) means \(S_j\) is a member of that row’s set. Click any cell to
+              change it. The diagonal (outlined) records which sets contain <em>themselves</em>. The bottom row
+              builds \(R\) by flipping the diagonal.
+            </p>
+            <div class="table-wrap"><table class="data membership" id="membership"></table></div>
+            <div id="diag-note" class="callout" aria-live="polite"></div>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="add-r">Add \(R\) to the universe</button>
+            </div>
+            <div id="r-test" hidden>
+              <div class="btn-row" role="group" aria-label="Suppose about R">
+                <button type="button" class="btn" data-r="true">Suppose \(R \in R\)</button>
+                <button type="button" class="btn" data-r="false">Suppose \(R \notin R\)</button>
+              </div>
+              <div id="r-result" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>Russell’s argument</h3>
+          <p>
+            Naive set theory has an <em>unrestricted comprehension</em> principle: for any property \(\varphi\), there is
+            a set of exactly the things with that property. Take \(\varphi(x) = x \notin x\):
+          </p>
+          $$R = \{\, x : x \notin x \,\} \qquad\text{so for every } x:\quad x \in R \iff x \notin x.$$
+          <p>Now let \(x\) be \(R\) itself:</p>
+          $$R \in R \iff R \notin R.$$
+          <p>A statement equivalent to its own negation is a contradiction, so naive set theory is inconsistent.</p>
+
+          <h3>The diagonal picture</h3>
+          <p>
+            The membership grid in the lab shows why. \(R\)’s row is the diagonal with every entry flipped, so \(R\)
+            disagrees with every set \(S_i\) at position \(i\). It can’t be any row of the table. If the table really
+            listed <em>all</em> sets, \(R\) would have to be one of its rows, and the diagonal cell \((R, R)\) would have
+            to equal its own opposite. This is the same diagonal argument Cantor used to show there are more real
+            numbers than whole numbers.
+          </p>
+
+          <h3>Barber vs. Russell</h3>
+          <p>
+            The barber version is milder: it just proves that <em>no such barber exists</em>, a perfectly fine
+            conclusion (a reductio). Russell’s version is a true antinomy because the offending set isn’t made up. It’s
+            guaranteed to exist by a principle that seemed self-evident and that Frege had built his foundations of
+            arithmetic on.
+          </p>
+
+          <h3>The fix</h3>
+          <p>
+            Zermelo–Fraenkel set theory (ZFC) replaces unrestricted comprehension with <em>separation</em>: you may only
+            carve a subset out of a set you already have, \(\{x \in A : \varphi(x)\}\). Running Russell’s argument then
+            just proves that \(\{x \in A : x \notin x\} \notin A\), so there is no set of all sets. Type theory, Russell’s
+            own fix, forbids the question “\(x \in x\)?” altogether.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://plato.stanford.edu/entries/russell-paradox/">Russell’s Paradox</a> <span class="src">· Stanford Encyclopedia of Philosophy</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Russell%27s_paradox">Russell’s paradox</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Barber_paradox">Barber paradox</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Cantor%27s_diagonal_argument">Cantor’s diagonal argument</a> <span class="src">· Wikipedia</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

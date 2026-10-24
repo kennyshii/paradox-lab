@@ -1,0 +1,136 @@
+.game-prompt {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  min-height: 1.6em;
+}
+
+.doors {
+  display: grid;
+  gap: 0.9rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 34rem;
+}
+
+.doors-10 {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.doors-100 {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.door {
+  position: relative;
+  aspect-ratio: 3 / 5;
+  border-radius: 10px 10px 4px 4px;
+  border: 2px solid #5c3416;
+  background: linear-gradient(160deg, #b5753d, #7a4520);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transition: transform 0.15s ease, background 0.25s ease, box-shadow 0.2s ease;
+}
+
+.door::after {
+  /* door knob */
+  content: "";
+  position: absolute;
+  right: 14%;
+  top: 52%;
+  width: 9%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffd98a;
+}
+
+.door:not(:disabled):hover {
+  transform: translateY(-3px);
+}
+
+.door:disabled {
+  cursor: default;
+}
+
+.door-num {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.doors-10 .door-num {
+  font-size: 1rem;
+}
+
+.doors-100 .door {
+  border-width: 1px;
+  border-radius: 3px;
+}
+
+.doors-100 .door-num {
+  font-size: 0.6rem;
+}
+
+.doors-100 .door::after {
+  display: none;
+}
+
+.door-prize {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(1.8rem, 7vw, 3rem);
+}
+
+.doors-10 .door-prize {
+  font-size: 1.4rem;
+}
+
+.doors-100 .door-prize {
+  font-size: 0.8rem;
+}
+
+.door.is-open {
+  background: var(--surface-2);
+  border-style: dashed;
+  border-color: var(--line-strong);
+}
+
+.door.is-open::after,
+.door.is-open .door-num {
+  opacity: 0;
+}
+
+.door.is-car {
+  background: var(--good-bg);
+  border-color: var(--good);
+  border-style: solid;
+}
+
+.door.is-picked {
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--accent);
+}
+
+.door.is-other {
+  box-shadow: 0 0 0 3px var(--bg), 0 0 0 6px var(--chart-3);
+}
+
+.doors-100 .door.is-picked,
+.doors-100 .door.is-other {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
+}
+
+.doors-100 .door.is-other {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--chart-3);
+}
+
+.door.is-final {
+  transform: translateY(-4px);
+}

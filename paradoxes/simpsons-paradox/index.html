@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Simpson’s Paradox · Paradox Lab</title>
+    <meta name="description" content="A treatment can win in every subgroup and still lose overall. Toggle groups in real datasets and watch the trend reverse." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="simpsons-paradox">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          A 1986 study compared two treatments for kidney stones. For <em>small</em> stones, treatment A had the higher
+          success rate. For <em>large</em> stones, treatment A had the higher success rate again. Yet when the two groups
+          were combined, treatment B came out ahead overall. How can something be better in every group and worse in
+          total? Surely an average of “better” and “better” is “better”?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="mix" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>What explains the reversal?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="The figures are real and add up correctly. Check them in the lab."><input type="radio" name="guess" value="error" /> <span>Someone made an arithmetic mistake.</span></label>
+              <label class="guess-option" data-feedback="The samples are big enough. The reversal is systematic, not noise."><input type="radio" name="guess" value="noise" /> <span>It’s random noise from small samples.</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="mix" /> <span>The two treatments were given to very different mixes of easy and hard cases.</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>Doctors gave treatment A mostly to the <strong>hard</strong> cases (large stones). A’s overall rate is dragged down by its difficult workload, not by being worse.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <div class="segmented" role="group" aria-label="Dataset" data-dataset>
+              <button type="button" data-value="kidney" aria-pressed="true">Kidney stones</button>
+              <button type="button" data-value="berkeley" aria-pressed="false">Berkeley admissions</button>
+            </div>
+            <p class="source" id="source"></p>
+
+            <fieldset class="group-toggles">
+              <legend>Groups included</legend>
+              <div id="toggles" class="btn-row"></div>
+            </fieldset>
+
+            <div id="verdict" aria-live="polite"></div>
+
+            <div class="lab-grid">
+              <div>
+                <h3>Rates by group</h3>
+                <ul class="legend" id="legend"></ul>
+                <div id="bars" class="bars"></div>
+              </div>
+              <div>
+                <h3>Who got which cases?</h3>
+                <p class="hint">Each bar shows how one arm’s cases were split across groups. Darker = harder group (lower overall rate).</p>
+                <div id="mix" class="mix"></div>
+                <label class="check" style="margin-top: 1rem"><input type="checkbox" id="fair" /> Compare fairly: give both the same case mix</label>
+                <div id="fair-out" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>Overall rates are weighted averages</h3>
+          <p>
+            An arm’s overall rate is the average of its group rates, weighted by how many of its cases fall in each group:
+          </p>
+          $$r_{\text{overall}} = \sum_g w_g\, r_g, \qquad w_g = \frac{n_g}{\sum_h n_h}.$$
+          <p>
+            Treatment A beats B within each group (\(93\% > 87\%\) and \(73\% > 69\%\)). But 75% of A’s patients had
+            large stones, versus 23% of B’s:
+          </p>
+          $$r_A = 0.25 \times 0.93 + 0.75 \times 0.73 \approx 0.78, \qquad r_B = 0.77 \times 0.87 + 0.23 \times 0.69 \approx 0.83.$$
+          <p>
+            The weights differ, so “better in every group” doesn’t carry over. The group (stone size) is a
+            <em>confounder</em>: it affects both which treatment you get and how likely you are to succeed.
+          </p>
+
+          <h3>The fair comparison</h3>
+          <p>
+            Giving both arms the same mix of cases (direct standardisation) removes the confounding and restores A’s
+            advantage. Tick “Compare fairly” in the lab to see it.
+          </p>
+
+          <h3>Berkeley</h3>
+          <p>
+            In 1973, men were admitted at 44% and women at 30%. Yet within departments, women did as well or better in
+            most cases: women had applied mostly to highly competitive departments with low admission rates for everyone.
+            The aggregate gap reflected <em>where</em> people applied, which raises its own questions, rather than
+            departments favouring men.
+          </p>
+
+          <h3>Why it’s veridical</h3>
+          <p>
+            The arithmetic is correct and the data are real. The lesson is practical: which table is right, the
+            aggregated or the split one, depends on the causal story. Here the split table answers “which treatment is
+            better for a given patient?”, but there are other datasets where aggregating is correct.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Simpson%27s_paradox">Simpson’s paradox</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://plato.stanford.edu/entries/paradox-simpson/">Simpson’s Paradox</a> <span class="src">· Stanford Encyclopedia of Philosophy</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Confounding">Confounding</a> <span class="src">· Wikipedia</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+#board {
+  width: 100%;
+  height: auto;
+}
+
+#area-table .swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
+  margin-right: 0.5rem;
+  vertical-align: -0.1rem;
+  border: 1px solid var(--ink);
+}
+
+#area-table .total td {
+  border-top: 2px solid var(--line-strong);
+}

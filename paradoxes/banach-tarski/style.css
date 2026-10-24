@@ -1,0 +1,11 @@
+#tree {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  height: auto;
+}
+
+.piece-legend {
+  flex-direction: column;
+  gap: 0.5rem;
+}

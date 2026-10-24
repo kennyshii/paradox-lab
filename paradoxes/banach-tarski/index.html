@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Banach–Tarski Paradox · Paradox Lab</title>
+    <meta name="description" content="How one ball can be cut into five pieces and reassembled into two identical balls, and why the axiom of choice makes it possible." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="banach-tarski">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          In 1924 Stefan Banach and Alfred Tarski proved that a solid ball in three-dimensional space can be split into
+          finitely many pieces which, moved only by rotations and translations (no stretching, no gaps, no overlaps),
+          reassemble into <strong>two</strong> solid balls, each identical to the original. Volume seems to have doubled
+          out of nothing. It sounds like a mistake, or a magic trick. Is it?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="theorem" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>What’s the status of the Banach–Tarski paradox?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="It has been checked for a century, and even verified by computer proof assistants."><input type="radio" name="guess" value="error" /> <span>There’s a subtle error in the proof.</span></label>
+              <label class="guess-option" data-feedback="Remarkably, five pieces are enough (four if you ignore the centre point)."><input type="radio" name="guess" value="infinite" /> <span>It only works with infinitely many pieces.</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="theorem" /> <span>It’s a correct theorem, but the pieces are too strange to have a volume.</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>It’s a <strong>theorem</strong> of standard mathematics (ZFC). The pieces are <em>non-measurable</em>: infinitely scattered clouds of points with no well-defined volume, so “volume doubled” never actually happens.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <p style="margin: 0">
+              The heart of the proof is not about balls at all but about the <strong>free group</strong> \(F_2\): every
+              finite sequence of moves \(a, a^{-1}, b, b^{-1}\) with no move immediately undone. Drawn as a tree, each
+              word is a point; four branches leave the centre (the empty word \(e\)), and each branch splits into three.
+              This picture is an explanation aid. You can’t run Banach–Tarski on a computer, because the real pieces
+              can’t be constructed explicitly.
+            </p>
+            <div class="segmented" role="group" aria-label="What to show" data-mode>
+              <button type="button" data-value="pieces" aria-pressed="true">Four pieces</button>
+              <button type="button" data-value="a" aria-pressed="false">Copy 1: shift by a⁻¹</button>
+              <button type="button" data-value="b" aria-pressed="false">Copy 2: shift by b⁻¹</button>
+            </div>
+            <div class="lab-grid">
+              <figure class="viz" style="margin: 0">
+                <svg id="tree" viewBox="-1.05 -1.05 2.1 2.1" role="img" aria-labelledby="tree-desc"></svg>
+              </figure>
+              <div>
+                <ul class="legend piece-legend" id="legend"></ul>
+                <div id="tree-desc" class="callout" aria-live="polite"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>1. A group that duplicates itself</h3>
+          <p>
+            Split \(F_2\) by first letter into \(W(a), W(a^{-1}), W(b), W(b^{-1})\), plus the identity \(e\). Applying
+            \(a^{-1}\) to every word in \(W(a)\) strips off the leading \(a\), and what remains is every word that
+            doesn’t start with \(a^{-1}\):
+          </p>
+          $$a^{-1}W(a) = W(a) \cup W(b) \cup W(b^{-1}) \cup \{e\}, \qquad\text{so}\qquad F_2 = a^{-1}W(a) \;\sqcup\; W(a^{-1}).$$
+          <p>
+            Two of the four pieces rebuild all of \(F_2\). By the same trick \(F_2 = b^{-1}W(b) \sqcup W(b^{-1})\): the
+            other two pieces build a second copy. That’s the lab’s diagram.
+          </p>
+
+          <h3>2. Put the group inside rotations</h3>
+          <p>
+            There are two rotations of 3D space, for instance by \(\arccos\tfrac13\) about two perpendicular axes,
+            that behave exactly like \(a\) and \(b\): no non-trivial sequence of them gets you back where you started.
+            So \(F_2\) lives inside the rotation group \(SO(3)\).
+          </p>
+
+          <h3>3. Use the axiom of choice to transfer it to the sphere</h3>
+          <p>
+            These rotations sort the points of the sphere into countably infinite <em>orbits</em>. The
+            <strong>axiom of choice</strong> lets us pick one representative point from each of the uncountably many
+            orbits, even though no rule can say which. Every point is then “representative × some word”, so the
+            paradoxical split of \(F_2\) becomes a split of the sphere into four pieces, two of which rotate into a
+            whole sphere and two into another. (A countable set of fixed points needs separate handling.) Extending
+            from the sphere to the solid ball, by drawing radii and dealing with the centre, gives the theorem.
+          </p>
+
+          <h3>4. Why volume isn’t violated</h3>
+          <p>
+            Volume is additive only for <em>measurable</em> sets. The pieces built with the axiom of choice are
+            non-measurable, so there is no such thing as “the volume of piece 3”. The argument that volume must be
+            conserved simply doesn’t apply to them. In two dimensions this can’t happen at all, because the rotation
+            group of the plane contains no free group.
+          </p>
+
+          <h3>Why it’s veridical</h3>
+          <p>
+            It is a correct theorem of ZFC, the standard foundation of mathematics, and it has been formally verified
+            with proof assistants. What it really shows is that the axiom of choice produces sets far stranger than
+            anything physical. No one can perform it with a real orange, because real objects are made of finitely many
+            atoms and can’t be cut into non-measurable pieces.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Banach%E2%80%93Tarski_paradox">Banach–Tarski paradox</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://www.youtube.com/watch?v=s86-Z-CbaHA">The Banach–Tarski Paradox</a> <span class="src">· Vsauce (video)</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Paradoxical_set">Paradoxical set</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Axiom_of_choice">Axiom of choice</a> <span class="src">· Wikipedia</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

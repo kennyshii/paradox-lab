@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Liar Paradox · Paradox Lab</title>
+    <meta name="description" content="Build self-referential sentences and see which can be consistently true or false. A truth-table explorer for the liar paradox." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+    <script type="module" src="main.js"></script>
+  </head>
+  <body data-slug="liar-paradox">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          Consider the sentence <strong>“This sentence is false.”</strong> If it is true, then what it says holds, so
+          it is false. If it is false, then what it says (that it’s false) is correct, so it is true. Each answer
+          forces the other. The argument uses nothing but the everyday rule that a sentence is true exactly when what
+          it says is the case. So which rule of everyday reasoning has to give?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="neither" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>“This sentence is false.” Is it true or false?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="Then what it says holds… so it’s false. Try it in the explorer."><input type="radio" name="guess" value="true" /> <span>True</span></label>
+              <label class="guess-option" data-feedback="Then what it says is correct… so it’s true. Try it in the explorer."><input type="radio" name="guess" value="false" /> <span>False</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="neither" /> <span>Neither value can be assigned consistently.</span></label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>Under the classical rules of truth, <strong>no consistent truth value exists</strong>. Logicians resolve it by changing the rules: truth-value gaps, a hierarchy of languages, or a logic that tolerates contradictions.</p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <div>
+              <h3 style="margin-bottom: 0.5rem">Build some sentences</h3>
+              <div class="btn-row" role="group" aria-label="Presets" id="presets"></div>
+            </div>
+            <div class="btn-row">
+              <span class="field-label" id="count-label">Sentences</span>
+              <div class="segmented" role="group" aria-labelledby="count-label" data-count>
+                <button type="button" data-value="1" aria-pressed="true">1</button>
+                <button type="button" data-value="2" aria-pressed="false">2</button>
+                <button type="button" data-value="3" aria-pressed="false">3</button>
+              </div>
+            </div>
+            <ol class="sentences" id="sentences"></ol>
+            <div id="verdict" aria-live="polite"></div>
+
+            <div class="lab-grid">
+              <div>
+                <h3 style="margin-bottom: 0.5rem">Truth table</h3>
+                <p class="hint">A row is <em>consistent</em> when every sentence’s value matches what it claims.</p>
+                <div class="table-wrap"><table class="data truth" id="table"></table></div>
+              </div>
+              <div>
+                <h3 style="margin-bottom: 0.5rem">Keep revising</h3>
+                <p class="hint">Pick starting values, then repeatedly set each sentence to what it claims. Consistent sets settle; paradoxes flip forever.</p>
+                <div class="btn-row" id="start" role="group" aria-label="Starting values"></div>
+                <div class="revision" id="revision"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div class="prose">
+          <h3>The T-schema</h3>
+          <p>
+            Tarski’s classic principle about truth says that for any sentence \(S\) that asserts \(p\):
+          </p>
+          $$S \text{ is true} \iff p.$$
+          <p>The liar \(L\) asserts “\(L\) is false”, i.e. \(p = \lnot T(L)\). Plugging in gives</p>
+          $$T(L) \iff \lnot T(L),$$
+          <p>
+            which has no solution in two-valued logic. That is exactly what an empty truth table means: no row survives.
+          </p>
+
+          <h3>Loops, not just self-reference</h3>
+          <p>
+            Self-reference alone isn’t the culprit. The truth-teller “This sentence is true” is self-referential but has
+            <em>two</em> consistent rows: it’s underdetermined rather than contradictory. And a liar can be spread
+            across several sentences (“The next sentence is true.” “The previous sentence is false.”): no single
+            sentence talks about itself, yet the cycle as a whole has an odd number of negations and no consistent
+            assignment. Sentences that bottom out in facts about the world (“Snow is white”) are <em>grounded</em> and
+            get exactly one value.
+          </p>
+
+          <h3>Why it’s an antinomy</h3>
+          <p>
+            Every premise looks like basic logic: sentences are true or false, and the T-schema holds. Yet together
+            they produce a contradiction. Proposed resolutions all give something up:
+          </p>
+          <ul>
+            <li><strong>Hierarchy (Tarski):</strong> a language can’t contain its own truth predicate; “true” for level-\(n\) sentences lives at level \(n+1\).</li>
+            <li><strong>Truth-value gaps (Kripke):</strong> ungrounded sentences like the liar get no value at all.</li>
+            <li><strong>Dialetheism (Priest):</strong> accept that the liar is both true and false, using a paraconsistent logic so the contradiction doesn’t spread.</li>
+          </ul>
+          <p>
+            The same diagonal trick powers Gödel’s incompleteness theorems and Russell’s paradox, which is next door.
+          </p>
+        </div>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://plato.stanford.edu/entries/liar-paradox/">Liar Paradox</a> <span class="src">· Stanford Encyclopedia of Philosophy</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Liar_paradox">Liar paradox</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Yablo%27s_paradox">Yablo’s paradox</a> <span class="src">· Wikipedia (a liar without any loop)</span></li>
+          <li><a href="https://plato.stanford.edu/entries/dialetheism/">Dialetheism</a> <span class="src">· Stanford Encyclopedia of Philosophy</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

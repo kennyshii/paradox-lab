@@ -1,0 +1,151 @@
+.source,
+.hint {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.group-toggles {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.group-toggles legend {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 0.5rem;
+}
+
+.chip {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.chip:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.bars {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.bar-group {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.bar-group.is-total {
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--line-strong);
+}
+
+.bar-group.is-total .bar-track {
+  height: 1.1rem;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.win {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+}
+
+.win-a {
+  color: var(--chart-1);
+  background: var(--accent-soft);
+}
+
+.win-b {
+  color: var(--chart-2);
+  background: color-mix(in srgb, var(--chart-2) 16%, var(--surface));
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 1fr 7.5rem;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.bar-track {
+  display: block;
+  height: 0.8rem;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.arm-a .bar-fill {
+  background: var(--chart-1);
+}
+
+.arm-b .bar-fill {
+  background: var(--chart-2);
+}
+
+.bar-value {
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-n {
+  font-weight: 400;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.mix {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.mix-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.mix-bar {
+  display: flex;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.mix-seg {
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 1px solid var(--surface);
+  transition: width 0.3s ease;
+}
