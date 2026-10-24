@@ -5,14 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Page not found · Paradox Lab</title>
     <meta name="color-scheme" content="light dark" />
-    <script src="/paradox-lab/assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="/paradox-lab/assets/css/main.css" />
+    <script>
+      // GitHub Pages serves this file at whatever URL 404'd, so relative paths
+      // break. Project sites live under /<repo>/; everything else is at root.
+      (function () {
+        var seg = location.pathname.split("/")[1];
+        var base = location.hostname.endsWith(".github.io") && seg ? "/" + seg + "/" : "/";
+        document.write('<base href="' + base + '">');
+      })();
+    </script>
+    <script src="assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css" />
   </head>
   <body>
     <main id="main" class="container home-hero">
       <p class="eyebrow">404</p>
       <h1>This page both exists and doesn’t.</h1>
-      <p class="lede">Mostly doesn’t. <a href="/paradox-lab/">Back to all paradoxes →</a></p>
+      <p class="lede">Mostly doesn’t. <a href="./">Back to all paradoxes →</a></p>
     </main>
   </body>
 </html>
