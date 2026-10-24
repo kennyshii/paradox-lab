@@ -3,6 +3,7 @@ import { $ } from "../../assets/js/lib/dom.js";
 import { lineChart, svg } from "../../assets/js/lib/chart.js";
 import { tween } from "../../assets/js/lib/sim.js";
 import { fmt, pct, length } from "../../assets/js/lib/format.js";
+import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { covered, remaining, harmonicPartial, checkpointsPassed, timeAt } from "./model.js";
 
 mountPage();
@@ -87,6 +88,96 @@ function drawZoom(root, w) {
 const redrawRoom = trackView($("#track"), drawRoom);
 const redrawZoom = trackView($("#zoom"), drawZoom);
 
+// ---------- The tiling square ----------
+
+const tiles = Array.from({ length: 40 }, () => ({ p: 0, v: 0 }));
+const FRACS = ["½", "¼", "⅛", "1⁄16", "1⁄32"];
+
+const tiling = stageCanvas($("#tiling"), {
+  aspect: 16 / 9,
+  minHeight: 300,
+  maxHeight: 460,
+  animate: true,
+  label: "A square filled by halves: one half, a quarter, an eighth, and so on.",
+  draw(ctx, w, h, t) {
+    const pos = position();
+    const shown = state.arrived ? 40 : state.walking ? Math.min(40, checkpointsPassed(pos)) : Math.min(40, state.k);
+    const S = Math.min(h - 70, w * 0.6);
+    let x = (w - S) / 2;
+    let y = (h - 56 - S) / 2 + 6;
+    let tw = S;
+    let th = S;
+    // empty square
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, S, S);
+    for (let i = 0; i < 40; i++) {
+      const tile = tiles[i];
+      const target = i < shown ? 1 : 0;
+      tile.v = (tile.v + (target - tile.p) * 0.14) * 0.72;
+      tile.p += tile.v;
+      // this tile's rectangle: alternately the left half / top half of what remains
+      let rx;
+      let ry;
+      let rw;
+      let rh;
+      if (i % 2 === 0) {
+        rw = tw / 2;
+        rh = th;
+        rx = x;
+        ry = y;
+        x += rw;
+        tw = rw;
+      } else {
+        rw = tw;
+        rh = th / 2;
+        rx = x;
+        ry = y + rh;
+        th = rh;
+      }
+      if (tile.p < 0.01 || rw < 0.3) continue;
+      const k = Math.max(0, Math.min(1.15, tile.p));
+      const cxr = rx + rw / 2;
+      const cyr = ry + rh / 2;
+      const hue = 210 + i * 22;
+      const newest = i === shown - 1 && !state.arrived;
+      ctx.save();
+      ctx.translate(cxr, cyr);
+      ctx.scale(k, k);
+      const g = ctx.createLinearGradient(-rw / 2, -rh / 2, rw / 2, rh / 2);
+      g.addColorStop(0, `hsla(${hue}, 95%, 66%, 0.95)`);
+      g.addColorStop(1, `hsla(${hue + 30}, 90%, 52%, 0.85)`);
+      ctx.fillStyle = g;
+      if (newest) {
+        ctx.shadowColor = `hsla(${hue}, 100%, 65%, ${0.5 + 0.4 * Math.sin(t * 4) ** 2})`;
+        ctx.shadowBlur = 30;
+      }
+      ctx.fillRect(-rw / 2 + 1, -rh / 2 + 1, rw - 2, rh - 2);
+      ctx.restore();
+      if (i < FRACS.length && rw > 34 && rh > 30) {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.font = `700 ${Math.min(34, rw / 3)}px -apple-system, Inter, sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.globalAlpha = Math.min(1, tile.p);
+        ctx.fillText(FRACS[i], cxr, cyr);
+        ctx.globalAlpha = 1;
+      }
+    }
+    if (state.arrived) {
+      ctx.fillStyle = `rgba(255,255,255,${0.15 + 0.1 * Math.sin(t * 3)})`;
+      ctx.fillRect((w - S) / 2, (h - 56 - S) / 2 + 6, S, S);
+    }
+  },
+});
+
+function renderTiling() {
+  const pos = position();
+  const steps = state.walking || state.arrived ? checkpointsPassed(pos) : state.k;
+  $("#tile-sum").textContent = state.arrived ? "1" : steps === 0 ? "0" : steps <= 12 ? fmt(covered(steps), Math.min(8, steps)) : `0.${"9".repeat(Math.min(10, Math.floor(steps * 0.30103)))}…`;
+  $("#tile-time").textContent = `${fmt(TRIP * pos, steps > 9 ? 4 : 2)} s`;
+}
+
 // ---------- Stats & chart ----------
 
 function renderStats() {
@@ -125,6 +216,7 @@ function renderChart() {
 }
 
 function render() {
+  renderTiling();
   redrawRoom();
   redrawZoom();
   renderStats();

@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="monty-hall">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -88,8 +88,11 @@
               <button type="button" class="btn" data-run="10000">Run 10,000</button>
               <button type="button" class="btn btn-ghost" id="sim-reset">Reset</button>
             </div>
+            <div class="sim-split">
+              <div class="stage tubes" id="tubes"></div>
+              <div class="viz" id="sim-chart"></div>
+            </div>
             <div class="stats" id="sim-stats" aria-live="polite"></div>
-            <div class="viz" id="sim-chart"></div>
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import { mountPage } from "../../assets/js/page.js";
 import { $, h, bindRange } from "../../assets/js/lib/dom.js";
 import { svg } from "../../assets/js/lib/chart.js";
 import { split, proofSteps, stepHolds } from "./model.js";
+import { prefersReducedMotion } from "../../assets/js/lib/sim.js";
 
 mountPage();
 
@@ -16,20 +17,21 @@ let step = 0;
 // ---------- Horse glyph ----------
 
 function horse(parent, x, y, fill, { dim = false, ring = false } = {}) {
-  const g = svg("g", { transform: `translate(${x} ${y})`, style: { opacity: dim ? 0.3 : 1 } }, parent);
+  const outer = svg("g", { transform: `translate(${x} ${y})`, style: { opacity: dim ? 0.3 : 1 } }, parent);
+  const g = svg("g", { class: "horse-body" }, outer);
   const st = { fill, stroke: "var(--ink)", strokeWidth: 1.4, strokeLinejoin: "round" };
-  if (ring) svg("ellipse", { cx: 30, cy: 30, rx: 31, ry: 29, style: { fill: "none", stroke: "var(--accent)", strokeWidth: 2.5, strokeDasharray: "4 3" } }, g);
+  svg("ellipse", { class: "ring", cx: 30, cy: 30, rx: 33, ry: 31, style: { fill: "none", stroke: "var(--accent)", strokeWidth: 2.5, strokeDasharray: "4 3", opacity: ring ? 1 : 0 } }, g);
   svg("path", { d: "M13 24 Q3 28 7 42", style: { fill: "none", stroke: "var(--ink)", strokeWidth: 3, strokeLinecap: "round" } }, g);
-  for (const lx of [16, 22, 36, 42]) svg("rect", { x: lx, y: 30, width: 4, height: 18, rx: 1.5, style: st }, g);
-  svg("ellipse", { cx: 29, cy: 27, rx: 17, ry: 9, style: st }, g);
-  svg("path", { d: "M38 26 L44 9 L47 4 L49 9 L57 14 L55 19 L48 17 L46 29 Z", style: st }, g);
+  for (const lx of [16, 22, 36, 42]) svg("rect", { class: "body", x: lx, y: 30, width: 4, height: 18, rx: 1.5, style: st }, g);
+  svg("ellipse", { class: "body", cx: 29, cy: 27, rx: 17, ry: 9, style: st }, g);
+  svg("path", { class: "body", d: "M38 26 L44 9 L47 4 L49 9 L57 14 L55 19 L48 17 L46 29 Z", style: st }, g);
   svg("circle", { cx: 50, cy: 12, r: 1.3, style: { fill: "var(--ink)" } }, g);
-  return g;
+  return outer;
 }
 
 function bracket(parent, x1, x2, y, label, color, up) {
   const d = up ? `M${x1} ${y + 8} V${y} H${x2} V${y + 8}` : `M${x1} ${y - 8} V${y} H${x2} V${y - 8}`;
-  svg("path", { d, style: { fill: "none", stroke: color, strokeWidth: 2.5 } }, parent);
+  svg("path", { d, class: "bracket", pathLength: 1, style: { fill: "none", stroke: color, strokeWidth: 2.5 } }, parent);
   svg("text", { x: (x1 + x2) / 2, y: up ? y - 6 : y + 18, "text-anchor": "middle", text: label, style: { fill: color, fontWeight: 700, fontSize: "14px" } }, parent);
 }
 
@@ -63,6 +65,12 @@ function colourFor(i, id, overlap, ok) {
   return UNKNOWN;
 }
 
+// The herd is rebuilt only when its size changes; between proof steps the horses
+// keep their elements so colours can fade (CSS transitions) instead of snapping.
+let herdFor = 0;
+let herdLayer;
+let overlay;
+
 function draw() {
   const steps = proofSteps(m);
   const { id, ok } = steps[step];
@@ -70,25 +78,38 @@ function draw() {
   // Keep a fixed minimum width so small herds aren't blown up to fill the frame.
   const width = Math.max(m, 5) * SLOT + 24;
   const offset = ((Math.max(m, 5) - m) * SLOT) / 2;
-  board.setAttribute("viewBox", `0 0 ${width} 170`);
-  board.replaceChildren();
-
-  const defs = svg("defs", {}, board);
-  const grad = svg("linearGradient", { id: "ab", x1: 0, x2: 1, y1: 0, y2: 0 }, defs);
-  for (const [off, c] of [[0, BETA], [0.5, BETA], [0.5, ALPHA], [1, ALPHA]]) svg("stop", { offset: off, style: { stopColor: c } }, grad);
-
   const xOf = (i) => 12 + offset + (i - 1) * SLOT;
-  for (let i = 1; i <= m; i++) {
-    const dim = id === "base" && i !== 1;
-    const ring = (id === "link" || id === "B") && overlap.includes(i);
-    horse(board, xOf(i) + 3, 46, colourFor(i, id, overlap, ok), { dim, ring });
-    svg("text", { x: xOf(i) + 33, y: 112, "text-anchor": "middle", text: String(i), style: { fill: "var(--ink-2)", fontWeight: 700, fontSize: "14px" } }, board);
-  }
 
-  if (["A", "B", "link"].includes(id) && m >= 2) bracket(board, xOf(2) + 4, xOf(m) + 60, 30, "A: one colour α", ALPHA, true);
-  if (["B", "link"].includes(id)) bracket(board, xOf(1) + 4, xOf(m - 1) + 60, 132, "B: one colour β", BETA, false);
+  if (herdFor !== m) {
+    herdFor = m;
+    board.setAttribute("viewBox", `0 0 ${width} 170`);
+    board.replaceChildren();
+    const defs = svg("defs", {}, board);
+    const grad = svg("linearGradient", { id: "ab", x1: 0, x2: 1, y1: 0, y2: 0 }, defs);
+    for (const [off, c] of [[0, BETA], [0.5, BETA], [0.5, ALPHA], [1, ALPHA]]) svg("stop", { offset: off, style: { stopColor: c } }, grad);
+    herdLayer = svg("g", {}, board);
+    overlay = svg("g", {}, board);
+    for (let i = 1; i <= m; i++) {
+      const g = horse(herdLayer, xOf(i) + 3, 46, UNKNOWN, {});
+      g.classList.add("horse");
+      g.style.setProperty("--d", `${i * 70}ms`);
+      svg("text", { x: xOf(i) + 33, y: 112, "text-anchor": "middle", text: String(i), style: { fill: "var(--ink-2)", fontWeight: 700, fontSize: "14px" } }, board);
+    }
+  }
+  overlay.replaceChildren();
+  [...herdLayer.children].forEach((g, k) => {
+    const i = k + 1;
+    const fill = colourFor(i, id, overlap, ok);
+    for (const shape of g.querySelectorAll(".body")) shape.style.fill = fill;
+    g.style.opacity = id === "base" && i !== 1 ? 0.3 : 1;
+    g.querySelector(".ring").style.opacity = (id === "link" || id === "B") && overlap.includes(i) ? 1 : 0;
+  });
+  board.dataset.step = id;
+
+  if (["A", "B", "link"].includes(id) && m >= 2) bracket(overlay, xOf(2) + 4, xOf(m) + 60, 30, "A: one colour α", ALPHA, true);
+  if (["B", "link"].includes(id)) bracket(overlay, xOf(1) + 4, xOf(m - 1) + 60, 132, "B: one colour β", BETA, false);
   if (id === "link" && !ok) {
-    svg("text", { x: xOf(1) + 66, y: 82, "text-anchor": "middle", text: "≠ ?", style: { fill: "var(--bad)", fontWeight: 800, fontSize: "20px" } }, board);
+    svg("text", { class: "clash", x: xOf(1) + 66, y: 82, "text-anchor": "middle", text: "≠ ?", style: { fill: "var(--bad)", fontWeight: 800, fontSize: "20px" } }, overlay);
   }
 
   const captions = {
@@ -148,6 +169,71 @@ function renderDominoes() {
   }
   box.replaceChildren(...items);
 }
+
+// ---------- Toppling dominoes ----------
+
+const chain = $("#chain");
+const DOM_W = 22;
+const DOM_H = 96;
+const BASE_Y = 170;
+let dominoes = [];
+let toppling = false;
+
+function buildChain() {
+  chain.replaceChildren();
+  svg("line", { x1: 10, x2: 750, y1: BASE_Y, y2: BASE_Y, style: { stroke: "rgba(255,255,255,0.18)", strokeWidth: 2 } }, chain);
+  const fixed = $("#fix-gap").checked;
+  dominoes = [];
+  let x = 40;
+  for (let k = 1; k <= 7; k++) {
+    const gapWide = k === 2 && !fixed;
+    if (k > 1) {
+      const gx = x + (gapWide ? 62 : 38);
+      svg("text", { x: gx, y: 196, "text-anchor": "middle", text: `${k - 1}→${k}`, class: `gap-label${k === 2 && !fixed ? " is-broken" : ""}` }, chain);
+      x += gapWide ? 124 : 76;
+    }
+    const g = svg("g", { class: "domino-piece", style: { "--d": `${k * 60}ms` } }, chain);
+    svg("rect", { x, y: BASE_Y - DOM_H, width: DOM_W, height: DOM_H, rx: 4, class: "domino-face" }, g);
+    for (const cy of [0.3, 0.7]) svg("circle", { cx: x + DOM_W / 2, cy: BASE_Y - DOM_H * cy, r: 3, style: { fill: "rgba(0,0,0,0.55)" } }, g);
+    svg("text", { x: x + DOM_W / 2, y: BASE_Y - DOM_H - 10, "text-anchor": "middle", text: `P(${k})`, class: "domino-label" }, chain);
+    dominoes.push({ g, x, k });
+  }
+}
+
+const wait = (ms) => new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : ms));
+
+async function topple() {
+  if (toppling) return;
+  toppling = true;
+  buildChain();
+  await wait(60);
+  const fixed = $("#fix-gap").checked;
+  for (const d of dominoes) {
+    const next = dominoes[d.k];
+    const reaches = next && (d.k !== 1 || fixed);
+    // Lean onto the next domino if it is within reach; otherwise fall flat.
+    const angle = reaches ? (Math.asin(Math.min(1, (next.x - d.x - DOM_W) / DOM_H)) * 180) / Math.PI + 4 : 90;
+    d.g.style.setProperty("--angle", `${angle}deg`);
+    d.g.classList.add("is-fallen");
+    if (!reaches) {
+      chain.classList.toggle("is-stuck", !!next);
+      break;
+    }
+    await wait(170);
+  }
+  $("#chain-desc").textContent = fixed
+    ? "If every link held, each domino would knock over the next, forever: that is what induction promises."
+    : "P(1) falls, but it can’t reach P(2): the 1 → 2 step is broken, so nothing after it is proved.";
+  toppling = false;
+}
+
+$("#topple").addEventListener("click", topple);
+$("#fix-gap").addEventListener("change", () => {
+  chain.classList.remove("is-stuck");
+  buildChain();
+  $("#chain-desc").textContent = $("#fix-gap").checked ? "Now every gap is small enough. Push the first domino." : "Each gap is one inductive step. The gap after P(1) is too wide.";
+});
+buildChain();
 
 function go(i) {
   step = Math.max(0, Math.min(proofSteps(m).length - 1, i));

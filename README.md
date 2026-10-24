@@ -38,7 +38,8 @@ Every page follows the same structure: **statement → guess → interactive lab
 ## Tech
 
 - Plain HTML, CSS and JavaScript ES modules. **No build step, no framework, no backend.**
-- Charts and diagrams are hand-written SVG (a ~200-line reusable line chart in [`assets/js/lib/chart.js`](assets/js/lib/chart.js)).
+- Charts and diagrams are hand-written SVG and Canvas (a reusable line chart with hover read-outs in [`assets/js/lib/chart.js`](assets/js/lib/chart.js), animated stages in [`assets/js/lib/fx.js`](assets/js/lib/fx.js)).
+- Apple-inspired motion: cross-page View Transitions morph a card's artwork into its lab, filters and guesses morph in place, and sections reveal on scroll. Everything respects `prefers-reduced-motion`.
 - [KaTeX](https://katex.org/) from a CDN for equations; that’s the only third-party code.
 - Light and dark themes (follows the OS, with a toggle), keyboard accessible, respects `prefers-reduced-motion`.
 - Deploys as-is to GitHub Pages; all paths are relative, so it works under `/paradox-lab/`.
@@ -79,6 +80,8 @@ paradox-lab/
 │           ├── sim.js          # Tally, runTrials (non-blocking simulations), tween
 │           ├── random.js       # seedable PRNG, randInt, shuffle
 │           ├── dom.js          # h(), bindRange, segmented controls, safe storage
+│           ├── fx.js           # stageCanvas, morph (view transitions), confetti, countTo
+│           ├── particles.js    # home-page particle morph and per-paradox silhouettes
 │           └── format.js       # percentages, lengths, fractions
 ├── paradoxes/
 │   ├── registry.js             # the list of paradoxes: title, type, teaser, reason

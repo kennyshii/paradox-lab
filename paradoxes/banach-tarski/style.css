@@ -9,3 +9,11 @@
   flex-direction: column;
   gap: 0.5rem;
 }
+
+.sphere-stage {
+  min-height: 300px;
+}
+
+.sphere-stage .stage-hud span {
+  display: block;
+}

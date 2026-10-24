@@ -8,7 +8,8 @@ Thanks for helping! New paradoxes, better explanations, accessibility fixes and 
 - **Pure models.** Maths and logic go in `model.js` with no DOM access, so they can be tested with `node --test`.
 - **Accessible by default.** Every control is a real `<button>`, `<input>` or `<select>` with a label. Visualisations have `role="img"` and an `aria-label` (or a text summary nearby) that is updated when they change. Readouts that change use `aria-live="polite"`.
 - **Theme-aware.** Use the CSS variables from `assets/css/main.css` (`--ink`, `--surface`, `--chart-1`…`--chart-4`, `--good`, `--bad`, …), never hard-coded colours that only work in one theme.
-- **Motion-safe.** Use `tween()` from `assets/js/lib/sim.js`, which skips animation when the user prefers reduced motion.
+- **Motion-safe.** Use `tween()` from `assets/js/lib/sim.js` or `stageCanvas()` from `assets/js/lib/fx.js`; both skip or pause animation when the user prefers reduced motion.
+- **A centrepiece.** Each lab has one cinematic visualization in a `<div class="stage">` (dark in both themes). Give its canvas an `aria-label` that describes the current state (`stage.setLabel(...)`).
 
 ## Adding a paradox
 
@@ -57,6 +58,8 @@ Every paradox page must have, in this order:
 | `assets/js/lib/random.js` | `mulberry32(seed)` (seedable, great in tests), `randInt`, `pick`, `shuffle` |
 | `assets/js/lib/dom.js` | `h()` element builder, `bindRange`, `segmented` toggle groups, `storage` |
 | `assets/js/lib/format.js` | `pct`, `fmt`, `length`, `fraction` |
+| `assets/js/lib/fx.js` | `stageCanvas(box, { draw, animate })` for a HiDPI animated canvas inside a dark `.stage`; `morph(fn)` (view-transition DOM updates), `confetti(el)`, `countTo(el, n)` |
+| `assets/js/lib/particles.js` | The home-page particle morph; add a silhouette for your paradox to `SHAPES` keyed by slug |
 
 ### Shared CSS components
 

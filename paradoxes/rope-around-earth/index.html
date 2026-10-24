@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="rope-around-earth">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -93,15 +93,16 @@
               </label>
             </div>
 
-            <div class="lab-grid">
-              <figure class="viz rope-globe" style="margin: 0">
-                <svg id="globe" viewBox="0 0 300 300" role="img" aria-labelledby="globe-title">
-                  <title id="globe-title">Sphere with the lengthened rope</title>
-                </svg>
-                <figcaption class="viz-caption" id="globe-caption"></figcaption>
-              </figure>
-              <div class="stats" id="stats" aria-live="polite"></div>
-            </div>
+            <figure class="rope-figure" style="margin: 0">
+              <div class="stage planet-stage" id="planet">
+                <div class="stage-hud">
+                  <div><span id="hud-label">Gap under the rope</span><strong id="hud-value">15.9 cm</strong></div>
+                  <div style="text-align: right"><span>Sphere</span><strong id="hud-body">Earth</strong></div>
+                </div>
+              </div>
+              <figcaption class="viz-caption" id="globe-caption"></figcaption>
+            </figure>
+            <div class="stats" id="stats" aria-live="polite"></div>
 
             <div>
               <h3 id="chart-title" style="margin-bottom: 0.5rem"></h3>

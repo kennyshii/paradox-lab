@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="russells-paradox">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -67,6 +67,9 @@
               The rule: <strong>the barber shaves exactly the men who don’t shave themselves.</strong> Toggle the
               villagers’ habits; the barber’s column fills itself in. Then try to fill in the barber’s own row.
             </p>
+            <div class="stage loop-stage" id="loop">
+              <div class="stage-hud"><div><strong id="loop-title">Suppose he shaves himself…</strong><span id="loop-text">then he’s a man who shaves himself, so the rule says the barber must not.</span></div></div>
+            </div>
             <div class="table-wrap"><table class="data village" id="village"></table></div>
             <div class="btn-row" role="group" aria-label="Suppose about the barber">
               <button type="button" class="btn" data-suppose="true">Suppose the barber shaves himself</button>

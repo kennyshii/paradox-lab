@@ -7,8 +7,9 @@ import { WIDTH, HEIGHT, PIECES, HOLE, SLIVERS, area, placed } from "./model.js";
 
 mountPage();
 
-const COLORS = { red: "#e45b4b", blue: "#4f86ea", green: "#3faa76", orange: "#eeaa3c" };
-const state = { t: 0, k: 1, showLine: false, showSliver: false, busy: false };
+const COLORS = { red: "#ff5a5f", blue: "#3d8bff", green: "#2fd38a", orange: "#ffb020" };
+const LIGHT = { red: "#ff9a8a", blue: "#8fc2ff", green: "#8ff0c0", orange: "#ffe08a" };
+const state = { t: 0, k: 1, showLine: false, showSliver: false, busy: false, pieceT: null };
 
 // The "hypotenuse" is really two segments. E(x) is its height in each arrangement, L(x) the true diagonal.
 const L = (x) => (HEIGHT / WIDTH) * x;
@@ -43,41 +44,51 @@ function densify(pts, closed = true, steps = 24) {
 }
 const polyline = (pts, closed = true) => densify(pts, closed).map((p) => toSvg(map(p))).join(" ");
 
+const NS = { "vector-effect": "non-scaling-stroke" };
+
 function draw() {
   board.replaceChildren();
-  const g = svg("g", {}, board);
-
-  // pieces
-  for (const piece of PIECES) {
-    const pts = placed(piece, state.t);
-    svg("polygon", { points: polyline(pts), style: { fill: COLORS[piece.id], stroke: "var(--ink)", strokeWidth: 0.06, strokeLinejoin: "round" } }, g);
-    const [lx, ly] = map([piece.labelAt[0] + piece.shift[0] * state.t, piece.labelAt[1] + piece.shift[1] * state.t]);
-    svg("text", { x: lx, y: HEIGHT - ly + 0.17, "text-anchor": "middle", text: piece.label, style: { fontSize: "0.5px", fontWeight: 700, fill: "#1c1b18" } }, g);
+  const defs = svg("defs", {}, board);
+  for (const id of Object.keys(COLORS)) {
+    const lg = svg("linearGradient", { id: `grad-${id}`, x1: 0, y1: 0, x2: 1, y2: 1 }, defs);
+    svg("stop", { offset: 0, style: { stopColor: LIGHT[id] } }, lg);
+    svg("stop", { offset: 1, style: { stopColor: COLORS[id] } }, lg);
   }
+  const g = svg("g", { id: "board-art" }, board);
+
+  // pieces (each one may be at its own point of the swap, for a staggered motion)
+  PIECES.forEach((piece, i) => {
+    const t = state.pieceT ? state.pieceT[i] : state.t;
+    const pts = placed(piece, t);
+    const lift = Math.sin(Math.PI * Math.min(1, Math.max(0, t))) * 0.25;
+    svg("polygon", { points: polyline(pts), ...NS, style: { fill: `url(#grad-${piece.id})`, stroke: "rgba(0,0,0,0.55)", strokeWidth: 1.2, strokeLinejoin: "round", filter: lift > 0.01 ? `drop-shadow(0 ${lift}px ${lift * 2}px rgba(0,0,0,0.6))` : "none" } }, g);
+    const [lx, ly] = map([piece.labelAt[0] + piece.shift[0] * t, piece.labelAt[1] + piece.shift[1] * t]);
+    svg("text", { x: lx, y: HEIGHT - ly + 0.17, "text-anchor": "middle", text: piece.label, style: { fontSize: "0.5px", fontWeight: 800, fill: "rgba(0,0,0,0.7)" } }, g);
+  });
 
   // unit grid drawn over the pieces (clipped to the figure) so squares can be counted
-  const clip = svg("clipPath", { id: "figure-clip" }, svg("defs", {}, board));
+  const clip = svg("clipPath", { id: "figure-clip" }, defs);
   const outline = [[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], ...(state.t < 0.5 ? [[8, 3]] : [[5, 2]])];
   svg("polygon", { points: state.t === 0 || state.t === 1 ? polyline(outline) : `0,0 ${WIDTH},0 ${WIDTH},${HEIGHT} 0,${HEIGHT}` }, clip);
-  const grid = svg("g", { "clip-path": "url(#figure-clip)", style: { stroke: "var(--ink)", strokeOpacity: 0.25, strokeWidth: 0.025, fill: "none" } }, g);
-  for (let y = 1; y < HEIGHT; y++) svg("polyline", { points: polyline([[0, y], [WIDTH, y]], false) }, grid);
-  for (let x = 1; x < WIDTH; x++) svg("polyline", { points: polyline([[x, 0], [x, HEIGHT]], false) }, grid);
+  const grid = svg("g", { "clip-path": "url(#figure-clip)", style: { stroke: "#000", strokeOpacity: 0.28, strokeWidth: 0.8, fill: "none" } }, g);
+  for (let y = 1; y < HEIGHT; y++) svg("polyline", { points: polyline([[0, y], [WIDTH, y]], false), ...NS }, grid);
+  for (let x = 1; x < WIDTH; x++) svg("polyline", { points: polyline([[x, 0], [x, HEIGHT]], false), ...NS }, grid);
 
   // the hole in arrangement B
   if (state.t > 0.98) {
-    svg("polygon", { points: polyline(HOLE), style: { fill: "var(--surface)", stroke: "var(--bad)", strokeWidth: 0.07, strokeDasharray: "0.15 0.1" } }, g);
+    svg("polygon", { points: polyline(HOLE), ...NS, class: "hole", style: { fill: "rgba(255,90,95,0.12)", stroke: "#ff6b78", strokeWidth: 2, strokeDasharray: "5 4" } }, g);
     const [hx, hy] = map([10.5, 0.5]);
-    svg("text", { x: hx, y: HEIGHT - hy + 0.2, "text-anchor": "middle", text: "?", style: { fontSize: "0.6px", fontWeight: 800, fill: "var(--bad)" } }, g);
+    svg("text", { x: hx, y: HEIGHT - hy + 0.2, "text-anchor": "middle", text: "?", style: { fontSize: "0.6px", fontWeight: 800, fill: "#ff6b78" } }, g);
   }
 
   // sliver between the bent edge and the true diagonal (drawn in exaggerated space)
   const which = state.t < 0.5 ? "A" : "B";
   if (state.showSliver && (state.t === 0 || state.t === 1)) {
     const [p0, bend, p2] = SLIVERS[which];
-    svg("polygon", { points: [p0, map(bend), p2].map(toSvg).join(" "), style: { fill: "var(--bad)", fillOpacity: 0.35, stroke: "var(--bad)", strokeWidth: 0.04 } }, g);
+    svg("polygon", { points: [p0, map(bend), p2].map(toSvg).join(" "), ...NS, style: { fill: "#ff375f", fillOpacity: 0.55, stroke: "#ff375f", strokeWidth: 1 } }, g);
   }
   if (state.showLine) {
-    svg("line", { x1: 0, y1: HEIGHT, x2: WIDTH, y2: 0, style: { stroke: "var(--ink)", strokeWidth: 0.06, strokeDasharray: "0.25 0.15" } }, g);
+    svg("line", { x1: 0, y1: HEIGHT, x2: WIDTH, y2: 0, ...NS, style: { stroke: "#fff", strokeWidth: 1.5, strokeDasharray: "6 4" } }, g);
   }
 
   const atRest = state.t === 0 || state.t === 1;
@@ -106,11 +117,22 @@ async function goTo(target) {
   state.busy = true;
   arrangement.set(target === 0 ? "A" : "B", { silent: true });
   const from = state.t;
-  await tween(1400, (p) => {
-    state.t = from + (target - from) * p;
-    draw();
-  });
+  // Each piece starts a little after the previous one and settles with a slight overshoot.
+  const back = (x) => 1 + 2.2 * (x - 1) ** 3 + 1.2 * (x - 1) ** 2;
+  await tween(
+    1900,
+    (p) => {
+      state.t = from + (target - from) * p;
+      state.pieceT = PIECES.map((_, i) => {
+        const local = Math.min(1, Math.max(0, (p - i * 0.12) / 0.64));
+        return from + (target - from) * back(local);
+      });
+      draw();
+    },
+    (x) => x,
+  );
   state.t = target;
+  state.pieceT = null;
   state.busy = false;
   draw();
 }
@@ -132,6 +154,29 @@ $("#show-sliver").addEventListener("change", (e) => {
   state.showSliver = e.target.checked;
   draw();
 });
+
+// ---------- Magnifying lens ----------
+
+const lens = $("#lens");
+const stageBox = $("#board-stage");
+const ZOOM = 9;
+function moveLens(e) {
+  const r = board.getBoundingClientRect();
+  const vb = board.viewBox.baseVal;
+  const ux = vb.x + ((e.clientX - r.left) / r.width) * vb.width;
+  const uy = vb.y + ((e.clientY - r.top) / r.height) * vb.height;
+  const size = lens.clientWidth;
+  const span = (size / r.width) * vb.width / ZOOM;
+  lens.setAttribute("viewBox", `${ux - span / 2} ${uy - span / 2} ${span} ${span}`);
+  const sb = stageBox.getBoundingClientRect();
+  lens.style.transform = `translate(${e.clientX - sb.left - size / 2}px, ${e.clientY - sb.top - size / 2}px)`;
+  stageBox.classList.add("is-lensing");
+}
+const trueLine = $("#lens-true");
+Object.entries({ x1: 0, y1: HEIGHT, x2: WIDTH, y2: 0, "vector-effect": "non-scaling-stroke" }).forEach(([k, v]) => trueLine.setAttribute(k, v));
+board.addEventListener("pointermove", moveLens);
+board.addEventListener("pointerdown", moveLens);
+board.addEventListener("pointerleave", () => stageBox.classList.remove("is-lensing"));
 
 renderTable();
 draw();

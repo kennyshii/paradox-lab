@@ -1,10 +1,8 @@
-.rope-globe svg {
-  width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
+.planet-stage {
+  min-height: 320px;
 }
 
 [data-presets] .btn[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+  --btn-bg: var(--accent-soft);
+  color: var(--accent);
 }

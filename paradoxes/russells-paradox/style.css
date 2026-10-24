@@ -151,3 +151,42 @@
   color: var(--muted);
   text-align: left;
 }
+
+.loop-stage {
+  min-height: 240px;
+}
+
+.loop-stage .stage-hud span {
+  display: block;
+  max-width: 34rem;
+}
+
+.loop-stage .stage-hud strong {
+  font-size: 1.25rem;
+}
+
+.membership.is-sweeping td.is-diag .cell,
+.membership.is-sweeping .r-row td .cell {
+  animation: sweep 0.7s var(--spring) both;
+  animation-delay: calc(var(--i, 0) * 0.28s);
+}
+
+.membership.is-sweeping .r-row td .cell {
+  animation-delay: calc(var(--i, 0) * 0.28s + 0.14s);
+}
+
+.membership.is-sweeping td.is-paradox .cell {
+  animation:
+    sweep 0.7s calc(var(--i, 0) * 0.28s + 0.14s) var(--spring) both,
+    flicker 1.2s calc(var(--i, 0) * 0.28s + 0.9s) steps(2, jump-none) infinite;
+}
+
+@keyframes sweep {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+    box-shadow: 0 0 0 4px var(--antinomy), 0 0 24px var(--antinomy);
+  }
+}

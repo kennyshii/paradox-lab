@@ -1,5 +1,7 @@
 import { mountPage, renderMath } from "../../assets/js/page.js";
 import { $, segmented } from "../../assets/js/lib/dom.js";
+import { stageCanvas } from "../../assets/js/lib/fx.js";
+import { prefersReducedMotion } from "../../assets/js/lib/sim.js";
 import { svg } from "../../assets/js/lib/chart.js";
 import { reducedWords, pieceOf, inShiftedPiece } from "./model.js";
 
@@ -76,4 +78,120 @@ function draw(mode) {
 }
 
 segmented($("[data-mode]"), { onChange: draw });
+
+// ---------- Artist's impression: one ball, five pieces, two balls ----------
+
+const fib = (n) =>
+  Array.from({ length: n }, (_, i) => {
+    const y = 1 - (2 * (i + 0.5)) / n;
+    const r = Math.sqrt(1 - y * y);
+    const a = i * 2.399963;
+    return [Math.cos(a) * r, y, Math.sin(a) * r];
+  });
+
+const N = 1500;
+const PIECE_COLORS = ["#2997ff", "#32d583", "#ff8a4c", "#c084fc", "#ff4fa3"];
+const base = fib(N);
+// Scatter points into five pieces like dust: neighbours usually land in different pieces.
+const hash = (i) => {
+  const x = Math.sin(i * 12.9898 + 4.1414) * 43758.5453;
+  return x - Math.floor(x);
+};
+const piece = base.map((_, i) => Math.floor(hash(i) * 5));
+const groupOf = (k) => (k < 2 ? 0 : 1);
+const counts = [0, 0];
+const slot = piece.map((k) => counts[groupOf(k)]++);
+const sphereA = fib(counts[0]);
+const sphereB = fib(counts[1]);
+const pts = base.map(() => ({ x: 0, y: 0, vx: 0, vy: 0 }));
+
+const PHASES = [
+  ["One solid ball", "Made of infinitely many points."],
+  ["Five scattered pieces", "Each piece is a dust of points, with no definite volume."],
+  ["Two identical balls", "Rotate and slide the pieces: two full balls, each as big as the first."],
+];
+let phase = 0;
+let auto = !prefersReducedMotion();
+let phaseTimer;
+
+const spheres = stageCanvas($("#spheres"), {
+  aspect: 16 / 9,
+  minHeight: 300,
+  maxHeight: 480,
+  animate: true,
+  label: "A ball of points splitting into five pieces and reassembling into two balls.",
+  draw(ctx, w, h, t) {
+    const R = Math.min(h * 0.3, w * 0.17);
+    const cy = h * 0.46;
+    const spin = t * 0.35;
+    const cs = Math.cos(spin);
+    const sn = Math.sin(spin);
+    const drawn = [];
+    for (let i = 0; i < N; i++) {
+      const k = piece[i];
+      let v;
+      let cx;
+      let rr = R;
+      if (phase === 0) {
+        v = base[i];
+        cx = w / 2;
+      } else if (phase === 1) {
+        v = base[i];
+        const a = (k / 5) * Math.PI * 2 - Math.PI / 2;
+        cx = w / 2 + Math.cos(a) * R * 1.7;
+        rr = R * 0.62;
+        const tx = cx + v[0] * cs * rr + v[2] * sn * rr;
+        const ty = cy + Math.sin(a) * R * 0.55 + v[1] * rr;
+        drawn.push(project(i, tx, ty, -v[0] * sn + v[2] * cs, k));
+        continue;
+      } else {
+        const g = groupOf(k);
+        v = (g ? sphereB : sphereA)[slot[i]];
+        cx = w / 2 + (g ? 1 : -1) * R * 1.45;
+      }
+      const tx = cx + (v[0] * cs + v[2] * sn) * rr;
+      const ty = cy + v[1] * rr;
+      drawn.push(project(i, tx, ty, -v[0] * sn + v[2] * cs, k));
+    }
+    // back-to-front so near points sit on top
+    drawn.sort((a, b) => a.z - b.z);
+    ctx.globalCompositeOperation = "lighter";
+    for (const d of drawn) {
+      ctx.globalAlpha = 0.35 + 0.65 * ((d.z + 1) / 2);
+      ctx.fillStyle = phase === 0 ? "#cfe3ff" : PIECE_COLORS[d.k];
+      const s = 1.2 + ((d.z + 1) / 2) * 1.8;
+      ctx.fillRect(d.x - s / 2, d.y - s / 2, s, s);
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+
+    function project(i, tx, ty, z, k) {
+      const p = pts[i];
+      if (!p.init) Object.assign(p, { x: tx, y: ty, init: true });
+      p.vx = (p.vx + (tx - p.x) * (0.03 + (i % 7) * 0.004)) * 0.84;
+      p.vy = (p.vy + (ty - p.y) * (0.03 + (i % 7) * 0.004)) * 0.84;
+      p.x += p.vx;
+      p.y += p.vy;
+      return { x: p.x, y: p.y, z, k };
+    }
+  },
+});
+
+const phaseControl = segmented($("[data-phase]"), {
+  onChange(v) {
+    auto = false;
+    setPhase(Number(v));
+  },
+});
+
+function setPhase(k) {
+  phase = k;
+  phaseControl.set(String(k), { silent: true });
+  $("#phase-title").textContent = PHASES[k][0];
+  $("#phase-text").textContent = PHASES[k][1];
+  spheres.setLabel(`${PHASES[k][0]}. ${PHASES[k][1]}`);
+  clearTimeout(phaseTimer);
+  if (auto) phaseTimer = setTimeout(() => setPhase((phase + 1) % 3), phase === 2 ? 4200 : 3000);
+}
+setPhase(0);
 draw("pieces");

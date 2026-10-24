@@ -48,3 +48,7 @@
   position: relative;
   z-index: 1;
 }
+
+.web-stage {
+  min-height: 340px;
+}

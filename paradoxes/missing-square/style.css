@@ -1,16 +1,76 @@
+.board-stage {
+  padding: clamp(0.75rem, 3vw, 1.75rem);
+  touch-action: none;
+}
+
 #board {
+  display: block;
   width: 100%;
   height: auto;
+  cursor: zoom-in;
+}
+
+.lens {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: #0d0d12;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.85),
+    0 20px 50px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 0.25s,
+    scale 0.45s var(--spring);
+}
+
+.is-lensing .lens {
+  opacity: 1;
+  scale: 1;
+}
+
+#lens-true {
+  stroke: #fff;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.lens-hint {
+  position: absolute;
+  left: 1rem;
+  top: 0.8rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.is-lensing .lens-hint {
+  opacity: 0;
+}
+
+#board .hole {
+  animation: hole-pulse 1.6s var(--ease-in-out) infinite;
+}
+
+@keyframes hole-pulse {
+  50% {
+    fill: rgba(255, 90, 95, 0.32);
+  }
 }
 
 #area-table .swatch {
   display: inline-block;
   width: 0.8rem;
   height: 0.8rem;
-  border-radius: 2px;
+  border-radius: 4px;
   margin-right: 0.5rem;
   vertical-align: -0.1rem;
-  border: 1px solid var(--ink);
 }
 
 #area-table .total td {

@@ -1,1 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3f2410"/><stop offset="1" stop-color="#6a3c17"/></linearGradient></defs><rect width="320" height="180" fill="url(#g)"/><g transform="translate(30 150) scale(20 -20)" stroke="#2a1608" stroke-width=".08"><polygon points="0,0 8,0 8,3" fill="#e9604f"/><polygon points="8,3 13,3 13,5" fill="#5b8def"/><polygon points="8,0 13,0 13,1 11,1 11,2 8,2" fill="#52b788"/><polygon points="11,1 13,1 13,3 8,3 8,2 11,2" fill="#f2b84b"/></g><line x1="30" y1="150" x2="290" y2="50" stroke="#ffe7c7" stroke-width="2" stroke-dasharray="5 4"/><text x="30" y="40" fill="#ffe7c7" font-family="Georgia,serif" font-size="22" font-style="italic">32 or 33?</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+<defs>
+<radialGradient id="bg" cx="0.55" cy="0.6" r="0.85"><stop offset="0" stop-color="#2c1606"/><stop offset="1" stop-color="#000"/></radialGradient>
+<linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffb340"/><stop offset="1" stop-color="#ff375f"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+</defs>
+<rect width="640" height="360" fill="url(#bg)"/>
+<ellipse cx="352.0" cy="216.0" rx="190" ry="120" fill="url(#tg)" opacity="0.28" filter="url(#soft)"/>
+<defs>
+<linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a8a"/><stop offset="1" stop-color="#ff5a5f"/></linearGradient>
+<linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fc2ff"/><stop offset="1" stop-color="#3d8bff"/></linearGradient>
+<linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8ff0c0"/><stop offset="1" stop-color="#2fd38a"/></linearGradient>
+<linearGradient id="o" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ffb020"/></linearGradient></defs>
+<polygon points="60,300 260,300 260,220" fill="url(#b)" stroke="#000" stroke-opacity=".5"/>
+<polygon points="260,220 580,220 580,100" fill="url(#r)" stroke="#000" stroke-opacity=".5"/>
+<polygon points="260,300 460,300 460,260 380,260 380,220 260,220" fill="url(#gg)" stroke="#000" stroke-opacity=".5"/>
+<polygon points="500,300 580,300 580,220 380,220 380,260 500,260" fill="url(#o)" stroke="#000" stroke-opacity=".5"/>
+<rect x="460" y="260" width="40" height="40" fill="#ff5a5f" fill-opacity=".15" stroke="#ff6b78" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="480.0" y="288.8" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="800" fill="#ff6b78" text-anchor="middle" letter-spacing="-1" opacity="1">?</text>
+<line x1="60" y1="300" x2="580" y2="100" stroke="#fff" stroke-width="2" stroke-dasharray="6 5" opacity=".7"/>
+<text x="60" y="70" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="800" fill="#fff" text-anchor="start" letter-spacing="-1" opacity="1">Where did the square go?</text>
+</svg>

@@ -1,1 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" width="320" height="180"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a1a45"/><stop offset="1" stop-color="#46296e"/></linearGradient></defs><rect width="320" height="180" fill="url(#g)"/><text x="160" y="80" fill="#efe2ff" font-family="Georgia,serif" font-size="24" text-anchor="middle" font-style="italic">“This sentence is false.”</text><g font-family="ui-monospace,monospace" font-size="18" font-weight="700" text-anchor="middle"><rect x="70" y="105" width="44" height="34" rx="6" fill="#c9a4f7"/><text x="92" y="128" fill="#2a1a45">T</text><rect x="138" y="105" width="44" height="34" rx="6" fill="none" stroke="#c9a4f7" stroke-width="2"/><text x="160" y="128" fill="#c9a4f7">F</text><rect x="206" y="105" width="44" height="34" rx="6" fill="#c9a4f7"/><text x="228" y="128" fill="#2a1a45">T</text></g><path d="M116 122h18M184 122h18" stroke="#efe2ff" stroke-width="2"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+<defs>
+<radialGradient id="bg" cx="0.5" cy="0.55" r="0.85"><stop offset="0" stop-color="#1d0b38"/><stop offset="1" stop-color="#000"/></radialGradient>
+<linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff4fa3"/></linearGradient>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter>
+</defs>
+<rect width="640" height="360" fill="url(#bg)"/>
+<ellipse cx="320.0" cy="198.00000000000003" rx="190" ry="120" fill="url(#tg)" opacity="0.28" filter="url(#soft)"/>
+<circle cx="320" cy="200" r="80" fill="#ff5a64" opacity=".25" filter="url(#soft)"/>
+<path d="M280 140 A50 50 0 1 1 360 140" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>
+<circle cx="360" cy="140" r="5" fill="#fff"/>
+<circle cx="320" cy="205" r="56" fill="#ff5a64" filter="url(#glow)"/>
+<text x="320" y="225" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif" font-size="56" font-weight="800" fill="#000000bb" text-anchor="middle" letter-spacing="-1" opacity="1">F</text>
+<path d="M60 300 h30 v-30 h30 v30 h30 v-30 h30 v30 h30 v-30 h30" fill="none" stroke="#fff" stroke-width="3" opacity=".8"/>
+<text x="580" y="90" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="800" fill="#fff" text-anchor="end" letter-spacing="-1" opacity="1">“This sentence</text><text x="580" y="124" font-family="-apple-system, BlinkMacSystemFont, 'SF Pro Display', Inter, 'Segoe UI', Roboto, sans-serif" font-size="28" font-weight="800" fill="url(#tg)" text-anchor="end" letter-spacing="-1" opacity="1">is false.”</text>
+</svg>

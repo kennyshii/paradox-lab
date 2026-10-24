@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="birthday-problem">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -61,6 +61,16 @@
               <span class="field-label">People in the room <output id="n-out" for="n"></output></span>
               <input id="n" type="range" min="1" max="100" step="1" value="23" />
             </label>
+            <div class="stage web-stage" id="web">
+              <div class="stage-hud">
+                <div><strong id="web-pairs">253</strong>pairs of people</div>
+                <div style="text-align: right"><strong id="web-p">50.7%</strong><span id="web-mode">chance two share a birthday</span></div>
+              </div>
+            </div>
+            <p class="viz-caption">
+              Every line is a pair of people who could share a birthday. Press <em>Sample one group</em> below and the people
+              fly to their birthdays on the year dial; shared birthdays flare up.
+            </p>
             <div class="stats" id="stats" aria-live="polite"></div>
             <div class="viz" id="curve"></div>
             <p class="viz-caption">

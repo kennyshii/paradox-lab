@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="banach-tarski">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -55,6 +55,23 @@
       <section class="paradox-section" aria-labelledby="lab-h">
         <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
         <div class="lab">
+          <div class="card lab-panel">
+            <div class="btn-row" style="justify-content: space-between">
+              <h3>One ball in, two balls out</h3>
+              <div class="segmented" role="group" aria-label="Animation stage" data-phase>
+                <button type="button" data-value="0" aria-pressed="true">One ball</button>
+                <button type="button" data-value="1" aria-pressed="false">Five pieces</button>
+                <button type="button" data-value="2" aria-pressed="false">Two balls</button>
+              </div>
+            </div>
+            <div class="stage sphere-stage" id="spheres">
+              <div class="stage-hud"><div><strong id="phase-title">One solid ball</strong><span id="phase-text">Made of infinitely many points.</span></div></div>
+            </div>
+            <p class="viz-caption">
+              An artist’s impression. The real pieces are so scattered (“non-measurable”) that they have no volume at all,
+              which is why moving them rigidly can double the total. Plays on its own; pick a stage to pause on it.
+            </p>
+          </div>
           <div class="card lab-panel">
             <p style="margin: 0">
               The heart of the proof is not about balls at all but about the <strong>free group</strong> \(F_2\): every

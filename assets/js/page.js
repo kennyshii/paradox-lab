@@ -4,12 +4,45 @@
 import { PARADOXES, TYPES, getParadox } from "../../paradoxes/registry.js";
 import { SITE_NAME, REPO_URL } from "./config.js";
 import { $, $$, h, storage } from "./lib/dom.js";
+import { morph, confetti } from "./lib/fx.js";
 
 // Site root, resolved from this module's own URL so it works under any base path
 // (e.g. https://user.github.io/paradox-lab/).
 export const SITE_ROOT = new URL("../../", import.meta.url);
 export const paradoxUrl = (slug) => new URL(`paradoxes/${slug}/`, SITE_ROOT).href;
 export const assetUrl = (path) => new URL(path, SITE_ROOT).href;
+export const thumbUrl = (slug) => assetUrl(`paradoxes/${slug}/thumb.svg`);
+
+// Names shared by a card on one page and the hero on the next, so the browser morphs one into the other.
+export const artName = (slug) => `art-${slug}`;
+export const titleName = (slug) => `title-${slug}`;
+
+/** Before following a link, tag its artwork/title so the cross-page view transition can match them. */
+export function tagForMorph(link, slug, { art, title }) {
+  link.addEventListener("click", () => {
+    for (const el of $$("[data-vt-temp]")) {
+      el.style.viewTransitionName = "";
+      delete el.dataset.vtTemp;
+    }
+    if (art) {
+      art.style.viewTransitionName = artName(slug);
+      art.dataset.vtTemp = "";
+    }
+    if (title) {
+      title.style.viewTransitionName = titleName(slug);
+      title.dataset.vtTemp = "";
+    }
+  });
+}
+
+// ---------- Explored-paradox tracking ----------
+
+export const visited = () => new Set(storage.get("visited", []));
+function markVisited(slug) {
+  const v = visited();
+  v.add(slug);
+  storage.set("visited", [...v]);
+}
 
 const LOGO = `<svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
   <path d="M16 3 L29 26 H3 Z" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
@@ -101,11 +134,26 @@ function renderHero(p) {
   if (!slot || !p) return;
   slot.className = "paradox-hero";
   slot.dataset.type = p.type;
+  document.body.dataset.type = p.type;
+  // Chapter pills built from the page's own section headings.
+  const chapters = $$(".paradox-section > h2[id]").map((h2) =>
+    h("li", {}, h("a", { href: `#${h2.id}` }, h2.textContent.replace(/^\s*\d+\s*/, "").trim())),
+  );
   slot.replaceChildren(
-    h("nav", { class: "crumbs", "aria-label": "Breadcrumb" }, h("a", { href: SITE_ROOT.href }, "All paradoxes"), " / ", h("a", { href: `${SITE_ROOT.href}#${p.type}` }, TYPES[p.type].label)),
-    h("div", { class: "hero-meta" }, badge(p.type), h("span", { class: "visually-hidden" }, `${TYPES[p.type].tagline}`)),
-    h("h1", {}, p.title),
-    h("p", { class: "type-reason" }, h("strong", {}, `Why ${TYPES[p.type].label.toLowerCase()}? `), p.reason),
+    h(
+      "div",
+      { class: "hero-text" },
+      h("nav", { class: "crumbs", "aria-label": "Breadcrumb" }, h("a", { href: SITE_ROOT.href }, "Paradox Lab"), " › ", h("a", { href: `${SITE_ROOT.href}#${p.type}` }, TYPES[p.type].label)),
+      h("h1", { style: { viewTransitionName: titleName(p.slug) } }, p.title),
+      h("div", { class: "hero-meta" }, badge(p.type), h("span", { class: "visually-hidden" }, `${TYPES[p.type].tagline}`)),
+      h("p", { class: "type-reason", style: { marginTop: "1rem" } }, h("strong", {}, `Why ${TYPES[p.type].label.toLowerCase()}? `), p.reason),
+      chapters.length ? h("ul", { class: "hero-steps", "aria-label": "On this page" }, ...chapters) : null,
+    ),
+    h(
+      "div",
+      { class: "hero-art-wrap" },
+      h("figure", { class: "hero-art", style: { viewTransitionName: artName(p.slug) } }, h("img", { src: thumbUrl(p.slug), alt: `Illustration for ${p.title}`, width: 640, height: 360 })),
+    ),
   );
   document.title = `${p.title} · ${SITE_NAME}`;
 }
@@ -118,10 +166,14 @@ function renderPager(p) {
   const next = PARADOXES[(i + 1) % PARADOXES.length];
   slot.className = "pager";
   slot.setAttribute("aria-label", "More paradoxes");
-  slot.replaceChildren(
-    h("a", { href: paradoxUrl(prev.slug), class: "prev" }, h("span", { class: "dir" }, "← Previous"), h("span", { class: "pager-title" }, prev.title)),
-    h("a", { href: paradoxUrl(next.slug), class: "next" }, h("span", { class: "dir" }, "Next →"), h("span", { class: "pager-title" }, next.title)),
-  );
+  const link = (q, dir, cls) => {
+    const img = h("img", { src: thumbUrl(q.slug), alt: "", width: 160, height: 90, loading: "lazy" });
+    const title = h("span", { class: "pager-title" }, q.title);
+    const a = h("a", { href: paradoxUrl(q.slug), class: cls }, img, h("span", {}, h("span", { class: "dir" }, dir), title));
+    tagForMorph(a, q.slug, { art: img, title });
+    return a;
+  };
+  slot.replaceChildren(link(prev, "← Previous", "prev"), link(next, "Next →", "next"));
 }
 
 // ---------- Guess before reveal ----------
@@ -182,6 +234,14 @@ function initGuess(slug) {
   result.tabIndex = -1;
   hide();
 
+  // Morph the card from "question" to "answer" instead of snapping.
+  const revealMorph = async (guessed) => {
+    section.style.viewTransitionName = "guess-card";
+    await morph(() => reveal({ guessed, focus: true }));
+    section.style.viewTransitionName = "";
+    if (guessed === answer) confetti(result);
+  };
+
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const chosen = new FormData(form).get("guess");
@@ -190,9 +250,9 @@ function initGuess(slug) {
       result.innerHTML = "<p>Pick one of the options first (or skip).</p>";
       return;
     }
-    reveal({ guessed: chosen, focus: true });
+    revealMorph(chosen);
   });
-  $("[data-skip]", form)?.addEventListener("click", () => reveal({ guessed: null, focus: true }));
+  $("[data-skip]", form)?.addEventListener("click", () => revealMorph(null));
 
   // Returning visitors keep their earlier guess.
   const saved = storage.get(key);
@@ -221,16 +281,45 @@ export function renderMath(root = document.body) {
 
 // ---------- Entry point ----------
 
+// ---------- Scroll reveals ----------
+
+export function observeReveals(root = document) {
+  if (!("IntersectionObserver" in window)) return;
+  document.documentElement.classList.add("js-reveal");
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add("is-in");
+        io.unobserve(e.target);
+      }
+    },
+    { rootMargin: "0px 0px -6% 0px", threshold: 0.08 },
+  );
+  for (const el of $$(".reveal:not(.is-in)", root)) io.observe(el);
+}
+
+function markReveals() {
+  for (const el of $$(".paradox-section, .lab-panel, .pager, [data-site-footer]")) el.classList.add("reveal");
+  $$(".lab-grid > .lab-panel").forEach((el, i) => el.style.setProperty("--reveal-delay", `${(i % 2) * 120}ms`));
+}
+
+// ---------- Entry point ----------
+
 export function mountPage() {
   const slug = document.body.dataset.slug;
   const p = slug ? getParadox(slug) : null;
   renderHeader();
   renderFooter();
+  document.body.prepend(h("div", { class: "scroll-progress", "aria-hidden": "true" }));
   if (p) {
     renderHero(p);
     renderPager(p);
     initGuess(slug);
+    markVisited(slug);
   }
+  markReveals();
+  observeReveals();
   renderMath();
   return p;
 }

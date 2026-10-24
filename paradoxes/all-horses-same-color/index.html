@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="all-horses-same-color">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -82,7 +82,15 @@
               <p style="margin: 0 0 0.75rem; color: var(--ink-2)">
                 Induction needs every link \(P(n) \Rightarrow P(n+1)\) to hold. Click a link to inspect it.
               </p>
-              <div class="dominoes" id="dominoes" role="group" aria-label="Inductive steps"></div>
+              <div class="stage domino-stage">
+                <svg id="chain" viewBox="0 0 760 210" role="img" aria-labelledby="chain-desc"></svg>
+                <div class="domino-controls btn-row">
+                  <button type="button" class="btn btn-primary btn-sm" id="topple">Push the first domino</button>
+                  <label class="check domino-fix"><input type="checkbox" id="fix-gap" /> Pretend the 1 → 2 step held</label>
+                </div>
+              </div>
+              <p class="viz-caption" id="chain-desc" aria-live="polite">Each gap is one inductive step. The gap after P(1) is too wide.</p>
+              <div class="dominoes" id="dominoes" role="group" aria-label="Inspect an inductive step"></div>
             </div>
           </div>
         </div>

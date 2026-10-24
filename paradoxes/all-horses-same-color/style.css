@@ -87,3 +87,124 @@
   outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* Herd: colours fade between proof steps, brackets draw themselves in */
+#herd .body,
+#herd .ring {
+  transition:
+    fill 0.8s var(--ease-out),
+    opacity 0.5s var(--ease-out);
+}
+
+#herd .horse {
+  transition: opacity 0.5s var(--ease-out);
+}
+
+#herd .horse-body {
+  animation:
+    horse-in 0.8s var(--spring) both,
+    idle 3.2s var(--ease-in-out) infinite alternate;
+  animation-delay: var(--d, 0ms), calc(var(--d, 0ms) + 0.8s);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+@keyframes horse-in {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.8);
+  }
+}
+
+@keyframes idle {
+  to {
+    transform: translateY(-1.5px) rotate(-1deg);
+  }
+}
+
+#herd .bracket {
+  stroke-dasharray: 1;
+  animation: draw-in 0.9s var(--ease-out) both;
+}
+
+@keyframes draw-in {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+#herd .clash {
+  animation: pop-in 0.6s var(--spring) both, shake 0.5s 0.6s;
+}
+
+@keyframes shake {
+  25% {
+    transform: translateX(-3px);
+  }
+  75% {
+    transform: translateX(3px);
+  }
+}
+
+/* Domino chain */
+.domino-stage {
+  padding: 1rem 1rem 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+#chain {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.domino-piece {
+  transform-box: fill-box;
+  transform-origin: 100% 100%;
+  transition: transform 0.42s cubic-bezier(0.55, 0, 1, 0.45);
+}
+
+.domino-piece.is-fallen {
+  transform: rotate(var(--angle, 75deg));
+}
+
+.domino-face {
+  fill: url(#domino-grad);
+  fill: #f5f5f7;
+  stroke: rgba(0, 0, 0, 0.4);
+}
+
+.domino-label {
+  fill: rgba(255, 255, 255, 0.75);
+  font: 700 13px var(--font-sans);
+}
+
+.gap-label {
+  fill: rgba(255, 255, 255, 0.45);
+  font: 600 11px var(--font-mono);
+}
+
+.gap-label.is-broken {
+  fill: #ff6b78;
+}
+
+#chain.is-stuck .gap-label.is-broken {
+  animation: flash 0.5s 3;
+}
+
+@keyframes flash {
+  50% {
+    opacity: 0.2;
+  }
+}
+
+.domino-controls {
+  justify-content: space-between;
+}
+
+.domino-fix {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.86rem;
+}

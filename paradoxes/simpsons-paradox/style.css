@@ -149,3 +149,12 @@
   border-right: 1px solid var(--surface);
   transition: width 0.3s ease;
 }
+
+.bubble-stage {
+  min-height: 320px;
+}
+
+.merge-btn[aria-pressed="true"] {
+  --btn-bg: var(--ink);
+  --btn-fg: var(--bg);
+}

@@ -1,6 +1,7 @@
 import { mountPage } from "../../assets/js/page.js";
 import { $, h, segmented } from "../../assets/js/lib/dom.js";
 import { fmt, pct } from "../../assets/js/lib/format.js";
+import { stageCanvas, cssVar } from "../../assets/js/lib/fx.js";
 import { DATASETS, rate, pooled, mix, standardised, summarise } from "./model.js";
 
 mountPage();
@@ -42,8 +43,186 @@ function renderToggles() {
   );
 }
 
+// ---------- Bubble stage: groups merge into the overall result ----------
+
+const ARM = { a: "#2997ff", b: "#ff8a4c" };
+const bubbleState = new Map();
+let merged = false;
+let mergeT = 0;
+let mergeV = 0;
+
+const ease = (cur, target, k = 0.14) => cur + (target - cur) * k;
+
+const bubbles = stageCanvas($("#bubbles"), {
+  aspect: 16 / 8,
+  minHeight: 320,
+  maxHeight: 460,
+  animate: true,
+  label: "Bubble chart of success rates by group.",
+  draw(ctx, w, h, t) {
+    const groups = active();
+    if (!groups.length) return;
+    mergeV = (mergeV + ((merged ? 1 : 0) - mergeT) * 0.07) * 0.8;
+    mergeT += mergeV;
+    const m = Math.max(0, Math.min(1, mergeT));
+
+    const top = 52;
+    const bottom = h - 46;
+    const left = 52;
+    const right = w - 16;
+    const cols = groups.length + 1;
+    const colW = (right - left) / (cols + 0.4);
+    const colX = (i) => left + colW * (i + 0.5) + (i === groups.length ? colW * 0.4 : 0);
+    const pa = pooled(groups, "a");
+    const pb = pooled(groups, "b");
+    const rates = [...groups.flatMap((g) => [rate(g.a), rate(g.b)]), rate(pa), rate(pb)];
+    const lo = Math.max(0, Math.floor((Math.min(...rates) - 0.06) * 10) / 10);
+    const hi = Math.min(1, Math.ceil((Math.max(...rates) + 0.06) * 10) / 10);
+    const sy = (v) => bottom - ((v - lo) / (hi - lo)) * (bottom - top);
+    const nMax = Math.max(pa[1], pb[1]);
+    const rMax = Math.min(colW * 0.24, (bottom - top) * 0.2);
+    const rad = (n) => Math.max(3, rMax * Math.sqrt(n / nMax));
+
+    // grid
+    ctx.font = "600 11px -apple-system, Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (let v = lo; v <= hi + 1e-9; v += 0.1) {
+      ctx.strokeStyle = "rgba(255,255,255,0.07)";
+      ctx.beginPath();
+      ctx.moveTo(left, sy(v));
+      ctx.lineTo(right, sy(v));
+      ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.45)";
+      ctx.fillText(pct(v, 0), left - 8, sy(v));
+    }
+    // divider before the combined column
+    const dx = (colX(groups.length - 1) + colX(groups.length)) / 2;
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = "rgba(255,255,255,0.2)";
+    ctx.beginPath();
+    ctx.moveTo(dx, top - 30);
+    ctx.lineTo(dx, bottom + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // column titles
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    const titleOf = (g) => g.name.replace("Department ", "Dept ");
+    groups.forEach((g, i) => {
+      ctx.fillStyle = `rgba(255,255,255,${0.75 - m * 0.45})`;
+      ctx.font = "600 12px -apple-system, Inter, sans-serif";
+      ctx.fillText(titleOf(g), colX(i), h - 22);
+    });
+    ctx.fillStyle = `rgba(255,255,255,${0.5 + m * 0.5})`;
+    ctx.font = "700 12px -apple-system, Inter, sans-serif";
+    ctx.fillText("All combined", colX(groups.length), h - 22);
+
+    // group bubbles fly to the combined column as they merge
+    const drawn = [];
+    groups.forEach((g, i) => {
+      for (const arm of ["a", "b"]) {
+        const off = (arm === "a" ? -1 : 1) * colW * 0.17;
+        const gx = colX(i) + off;
+        const gy = sy(rate(g[arm]));
+        const cx = colX(groups.length) + off;
+        const cy = sy(rate(arm === "a" ? pa : pb));
+        const tx = gx + (cx - gx) * m;
+        const ty = gy + (cy - gy) * m;
+        const key = `${g.name}:${arm}`;
+        const st = bubbleState.get(key) ?? { x: tx, y: bottom, r: 0 };
+        st.x = ease(st.x, tx, 0.2);
+        st.y = ease(st.y, ty, 0.2);
+        st.r = ease(st.r, rad(g[arm][1]) * (1 - m * 0.6), 0.16);
+        bubbleState.set(key, st);
+        drawn.push({ ...st, arm, i, alpha: 1 - m * 0.75 });
+      }
+    });
+    // within-group comparison lines (fade out while merging)
+    groups.forEach((g, i) => {
+      const A = drawn.find((d) => d.i === i && d.arm === "a");
+      const B = drawn.find((d) => d.i === i && d.arm === "b");
+      const aWins = rate(g.a) > rate(g.b);
+      ctx.strokeStyle = aWins ? `rgba(41,151,255,${0.6 * (1 - m)})` : `rgba(255,138,76,${0.6 * (1 - m)})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(A.x, A.y);
+      ctx.lineTo(B.x, B.y);
+      ctx.stroke();
+      if (m < 0.5) {
+        ctx.globalAlpha = 1 - m * 2;
+        ctx.fillStyle = aWins ? ARM.a : ARM.b;
+        ctx.font = "700 11px -apple-system, Inter, sans-serif";
+        ctx.fillText(aWins ? "A ahead" : "B ahead", colX(i), top - 20);
+        ctx.globalAlpha = 1;
+      }
+    });
+    for (const d of drawn) {
+      ctx.globalAlpha = d.alpha;
+      const g = ctx.createRadialGradient(d.x - d.r * 0.3, d.y - d.r * 0.35, d.r * 0.1, d.x, d.y, d.r);
+      g.addColorStop(0, "#fff");
+      g.addColorStop(0.25, ARM[d.arm]);
+      g.addColorStop(1, ARM[d.arm] + "99");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, Math.max(0, d.r), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // combined bubbles: ghost outlines until the merge lands
+    for (const arm of ["a", "b"]) {
+      const p = arm === "a" ? pa : pb;
+      const x = colX(groups.length) + (arm === "a" ? -1 : 1) * colW * 0.17;
+      const y = sy(rate(p));
+      const r = rad(p[1]);
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 4]);
+      ctx.strokeStyle = `rgba(255,255,255,${0.35 * (1 - m)})`;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      if (m > 0.02) {
+        ctx.globalAlpha = m;
+        ctx.shadowColor = ARM[arm];
+        ctx.shadowBlur = 30 * m;
+        const g = ctx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r);
+        g.addColorStop(0, "#fff");
+        g.addColorStop(0.2, ARM[arm]);
+        g.addColorStop(1, ARM[arm] + "aa");
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r * (0.6 + 0.4 * m), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = "#fff";
+        ctx.font = "700 13px -apple-system, Inter, sans-serif";
+        ctx.fillText(pct(rate(p), 0), x, y - r - 8);
+        ctx.globalAlpha = 1;
+      }
+    }
+    if (m > 0.6) {
+      const aWins = rate(pa) > rate(pb);
+      ctx.globalAlpha = (m - 0.6) / 0.4;
+      ctx.fillStyle = aWins ? ARM.a : ARM.b;
+      ctx.font = "800 13px -apple-system, Inter, sans-serif";
+      ctx.fillText(aWins ? "A ahead overall" : "B ahead overall", colX(groups.length), top - 20);
+      ctx.globalAlpha = 1;
+    }
+  },
+});
+
+$("#merge").addEventListener("click", (e) => {
+  merged = !merged;
+  e.currentTarget.setAttribute("aria-pressed", String(merged));
+  e.currentTarget.textContent = merged ? "Split by group" : "Merge the groups";
+});
+
 function render() {
   const groups = active();
+  bubbles.setLabel(groups.length ? `Success rates for ${groups.map((g) => g.name).join(", ")}, ${merged ? "merged into overall rates" : "shown group by group"}.` : "No groups selected.");
   $("#source").textContent = `Data: ${data.source}.`;
   $("#legend").innerHTML = `<li><span class="swatch" style="--swatch:var(--chart-1)"></span>${data.a}</li><li><span class="swatch" style="--swatch:var(--chart-2)"></span>${data.b}</li>`;
 

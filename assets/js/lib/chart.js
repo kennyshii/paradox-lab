@@ -85,6 +85,14 @@ export function lineChart(container, options) {
   };
   const sx = (v) => scale("x", v);
   const sy = (v) => scale("y", v);
+  const invX = (px) => {
+    const [d0, d1] = state.x.domain;
+    const t = (px - m.left) / (width - m.right - m.left);
+    return state.x.type === "log" ? 10 ** (Math.log10(d0) + t * (Math.log10(d1) - Math.log10(d0))) : d0 + t * (d1 - d0);
+  };
+  const uid = Math.random().toString(36).slice(2, 8);
+  let hoverX = null;
+  let hoverG = null;
 
   function redraw() {
     root.replaceChildren();
@@ -110,8 +118,14 @@ export function lineChart(container, options) {
     if (y.label)
       svg("text", { class: "axis-label", x: -(m.top + bottom) / 2, y: 14, transform: "rotate(-90)", "text-anchor": "middle", text: y.label }, axis);
 
-    const clipId = `clip-${Math.random().toString(36).slice(2, 8)}`;
-    const clip = svg("clipPath", { id: clipId }, svg("defs", {}, root));
+    const clipId = `clip-${uid}`;
+    const defs = svg("defs", {}, root);
+    const clip = svg("clipPath", { id: clipId }, defs);
+    for (const s of opts.series.filter((s) => s.fill)) {
+      const g = svg("linearGradient", { id: `fill-${uid}-${s.id}`, x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+      svg("stop", { offset: 0, style: { stopColor: s.color, stopOpacity: 0.32 } }, g);
+      svg("stop", { offset: 1, style: { stopColor: s.color, stopOpacity: 0 } }, g);
+    }
     svg("rect", { x: m.left, y: m.top - 2, width: width - m.left - m.right, height: bottom - m.top + 4 }, clip);
     const plot = svg("g", { "clip-path": `url(#${clipId})` }, root);
 
@@ -132,23 +146,81 @@ export function lineChart(container, options) {
       if (s.fill) {
         const base = sy(Math.max(state.y.domain[0], 0));
         const area = `${d}L${sx(pts.at(-1)[0]).toFixed(1)},${base}L${sx(pts[0][0]).toFixed(1)},${base}Z`;
-        svg("path", { d: area, style: { fill: s.color, opacity: 0.14, stroke: "none" } }, plot);
+        svg("path", { d: area, style: { fill: `url(#fill-${uid}-${s.id})`, stroke: "none" } }, plot);
       }
       if (s.line !== false && !s.dots)
-        svg("path", { d, style: { fill: "none", stroke: s.color, strokeWidth: s.width ?? 2.5, strokeDasharray: s.dashed ? "6 5" : "none", strokeLinejoin: "round", strokeLinecap: "round" } }, plot);
+        svg("path", { d, class: "series-line", style: { color: s.color, fill: "none", stroke: s.color, strokeWidth: s.width ?? 2.75, strokeDasharray: s.dashed ? "6 5" : "none", strokeLinejoin: "round", strokeLinecap: "round" } }, plot);
       if (s.dots) for (const [px, py] of pts) svg("circle", { cx: sx(px), cy: sy(py), r: s.r ?? 3.5, style: { fill: s.color } }, plot);
     }
 
     for (const mk of state.markers) {
       const cx = sx(mk.x);
       const cy = sy(mk.y);
+      svg("circle", { cx, cy, r: (mk.r ?? 6) + 6, style: { fill: mk.color ?? "var(--ink)", opacity: 0.18 } }, root);
       svg("circle", { cx, cy, r: mk.r ?? 6, style: { fill: "var(--surface)", stroke: mk.color ?? "var(--ink)", strokeWidth: 3 } }, root);
       if (mk.label) {
         const right = cx < width - 140;
-        svg("text", { x: cx + (right ? 12 : -12), y: cy - 10, "text-anchor": right ? "start" : "end", text: mk.label, style: { fill: mk.color ?? "var(--ink)", fontWeight: 700, fontSize: "13px" } }, root);
+        svg("text", { x: cx + (right ? 14 : -14), y: cy - 12, "text-anchor": right ? "start" : "end", text: mk.label, style: { fill: mk.color ?? "var(--ink)", fontWeight: 700, fontSize: "13px" } }, root);
       }
     }
+    hoverG = svg("g", { "aria-hidden": "true" }, root);
+    drawHover();
   }
+
+  // ---------- Hover read-out ----------
+
+  const tip = document.createElement("div");
+  tip.className = "chart-tip";
+  tip.hidden = true;
+  if (getComputedStyle(container).position === "static") container.style.position = "relative";
+  container.append(tip);
+
+  const nearest = (pts, x) => {
+    let lo = 0;
+    let hi = pts.length - 1;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (pts[mid][0] < x) lo = mid;
+      else hi = mid;
+    }
+    return Math.abs(pts[lo][0] - x) <= Math.abs(pts[hi][0] - x) ? pts[lo] : pts[hi];
+  };
+
+  function drawHover() {
+    if (!hoverG) return;
+    hoverG.replaceChildren();
+    const live = opts.series.filter((s) => s.label && state.data[s.id]?.length > 1 && s.hover !== false);
+    if (hoverX == null || !live.length || opts.hover === false) {
+      tip.hidden = true;
+      return;
+    }
+    const rows = live.map((s) => ({ s, p: nearest(state.data[s.id], invX(hoverX)) }));
+    const px = sx(rows[0].p[0]);
+    svg("line", { class: "hover-line", x1: px, x2: px, y1: m.top, y2: opts.height - m.bottom }, hoverG);
+    for (const { s, p } of rows) svg("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4.5, style: { fill: s.color, stroke: "var(--surface)", strokeWidth: 2 } }, hoverG);
+    const fx = state.x.tipFormat ?? state.x.format;
+    const fy = state.y.tipFormat ?? state.y.format;
+    tip.innerHTML = `<div>${state.x.label ? `${state.x.label}: ` : ""}<b>${fx(rows[0].p[0])}</b></div>${rows.map(({ s, p }) => `<div><i style="--c:${s.color}"></i>${s.label}: <b>${fy(p[1])}</b></div>`).join("")}`;
+    tip.hidden = false;
+    const box = container.getBoundingClientRect();
+    const svgBox = root.getBoundingClientRect();
+    const scaleK = svgBox.width / width;
+    const left = svgBox.left - box.left + px * scaleK;
+    const tw = tip.offsetWidth;
+    const x = left + 14 + tw > box.width ? left - tw - 14 : left + 14;
+    tip.style.transform = `translate(${Math.max(4, x)}px, ${svgBox.top - box.top + m.top}px)`;
+  }
+
+  root.addEventListener("pointermove", (e) => {
+    const r = root.getBoundingClientRect();
+    const px = ((e.clientX - r.left) / r.width) * width;
+    hoverX = px >= m.left && px <= width - m.right ? px : null;
+    drawHover();
+  });
+  root.addEventListener("pointerleave", () => {
+    hoverX = null;
+    drawHover();
+  });
 
   const ro = new ResizeObserver((entries) => {
     const w = Math.floor(entries[0].contentRect.width);

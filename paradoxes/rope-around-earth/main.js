@@ -1,7 +1,8 @@
 import { mountPage } from "../../assets/js/page.js";
 import { $, $$, bindRange, segmented } from "../../assets/js/lib/dom.js";
-import { lineChart, svg } from "../../assets/js/lib/chart.js";
+import { lineChart } from "../../assets/js/lib/chart.js";
 import { fmt, length } from "../../assets/js/lib/format.js";
+import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { uniformGap, peakLift, liftProfile } from "./model.js";
 
 mountPage();
@@ -22,53 +23,226 @@ const COMPARISONS = [
 ];
 const tallerThan = (h) => COMPARISONS.find(([v]) => h >= v)?.[1];
 
-// ---------- Globe drawing (schematic) ----------
+// ---------- Planet stage ----------
 
-const globe = $("#globe");
-const C = 150;
-const RD = 108; // radius of the drawn sphere, in SVG units
+const BODIES = [
+  { max: 3, name: "Ball", a: "#ffb066", b: "#c4511a", glow: "rgba(255,140,60,0.35)", kind: "ball" },
+  { max: 5e5, name: "Asteroid", a: "#b9b2a6", b: "#4a4540", glow: "rgba(200,200,200,0.15)", kind: "rock" },
+  { max: 3e6, name: "Moon", a: "#e4e4e8", b: "#5d5d66", glow: "rgba(220,220,255,0.2)", kind: "rock" },
+  { max: 1.5e7, name: "Earth", a: "#5ab8ff", b: "#0b3a8c", glow: "rgba(80,160,255,0.45)", kind: "earth" },
+  { max: 2e8, name: "Gas giant", a: "#f3d2a2", b: "#9a5a2c", glow: "rgba(255,200,140,0.3)", kind: "bands" },
+  { max: Infinity, name: "Star", a: "#fff4c2", b: "#ff8a00", glow: "rgba(255,170,40,0.75)", kind: "star" },
+];
+const bodyFor = (R) => {
+  const preset = [...$$("[data-presets] button")].find((b) => Math.abs(Number(b.dataset.radius) - R) / R < 0.01);
+  const body = BODIES.find((b) => R < b.max);
+  return { ...body, name: preset?.textContent ?? body.name };
+};
+
+const stars = Array.from({ length: 160 }, () => [Math.random(), Math.random(), Math.random() * 1.3 + 0.2, Math.random() * 6]);
+const crater = Array.from({ length: 14 }, () => [Math.random() * 2 - 1, Math.random() * 2 - 1, 0.05 + Math.random() * 0.14]);
+const lands = Array.from({ length: 26 }, (_, i) => {
+  const c = [0.6, 2.4, 4.2][i % 3];
+  return [c + (Math.random() - 0.5) * 0.9, (Math.random() - 0.5) * 1.3, 0.08 + Math.random() * 0.16];
+});
+const anim = { gap: { x: 14, v: 0 }, theta: { x: 0.5, v: 0 } };
+let view = { gapRatio: 0.05, theta: 0.5 };
+
+function spring(s, target) {
+  s.v = (s.v + (target - s.x) * 0.09) * 0.78;
+  s.x += s.v;
+  return s.x;
+}
+
+const planet = stageCanvas($("#planet"), {
+  aspect: 16 / 10,
+  minHeight: 320,
+  maxHeight: 560,
+  animate: true,
+  label: "A planet with a rope around it.",
+  draw(ctx, w, h, t) {
+    // stars
+    for (const [x, y, r, ph] of stars) {
+      ctx.fillStyle = `rgba(255,255,255,${0.25 + 0.35 * Math.sin(t * 1.5 + ph) ** 2})`;
+      ctx.fillRect(x * w, y * h, r, r);
+    }
+    const body = bodyFor(state.R);
+    const peak = state.mode === "peak";
+    const RD = peak ? Math.min(w * 0.36, h * 0.62) : Math.min(w, h) * 0.3;
+    const cx = w / 2;
+    const cy = peak ? h * 0.42 + RD : h / 2 - 10;
+
+    // atmosphere glow
+    const glow = ctx.createRadialGradient(cx, cy, RD * 0.9, cx, cy, RD * (body.kind === "star" ? 1.9 : 1.35));
+    glow.addColorStop(0, body.glow);
+    glow.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, RD * 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // sphere body
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, RD, 0, Math.PI * 2);
+    ctx.clip();
+    const shade = ctx.createRadialGradient(cx - RD * 0.4, cy - RD * 0.45, RD * 0.1, cx, cy, RD * 1.05);
+    shade.addColorStop(0, body.a);
+    shade.addColorStop(1, body.b);
+    ctx.fillStyle = shade;
+    ctx.fillRect(cx - RD, cy - RD, RD * 2, RD * 2);
+    const spin = t * 0.15;
+    if (body.kind === "earth") {
+      ctx.fillStyle = "rgba(70,190,120,0.75)";
+      for (const [lon, lat, s] of lands) {
+        const x = Math.sin(lon + spin);
+        if (Math.cos(lon + spin) < 0) continue;
+        ctx.beginPath();
+        ctx.ellipse(cx + x * RD * 0.85, cy + lat * RD * 0.6, RD * s * Math.sqrt(1 - x * x) + 1, RD * s * 0.7, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = "rgba(255,255,255,0.10)";
+      for (let k = 0; k < 6; k++) {
+        ctx.beginPath();
+        ctx.ellipse(cx + Math.sin(spin * 1.4 + k * 1.7) * RD * 0.6, cy - RD * 0.75 + k * RD * 0.3, RD * (0.25 + (k % 3) * 0.12), RD * 0.035, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (body.kind === "rock") {
+      for (const [x, y, r] of crater) {
+        ctx.fillStyle = "rgba(0,0,0,0.18)";
+        ctx.beginPath();
+        ctx.arc(cx + x * RD * 0.8, cy + y * RD * 0.8, r * RD, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else if (body.kind === "bands") {
+      for (let k = -5; k <= 5; k++) {
+        ctx.fillStyle = k % 2 ? "rgba(140,70,30,0.28)" : "rgba(255,240,210,0.18)";
+        ctx.fillRect(cx - RD, cy + k * RD * 0.18 + Math.sin(t + k) * 2, RD * 2, RD * 0.12);
+      }
+    } else if (body.kind === "ball") {
+      ctx.strokeStyle = "rgba(60,20,0,0.6)";
+      ctx.lineWidth = Math.max(1.5, RD * 0.02);
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, RD * Math.abs(Math.cos(spin * 3)), RD, 0, 0, Math.PI * 2);
+      ctx.moveTo(cx - RD, cy);
+      ctx.lineTo(cx + RD, cy);
+      ctx.stroke();
+    } else if (body.kind === "star") {
+      for (let k = 0; k < 40; k++) {
+        const a = k * 2.4 + t * 0.2;
+        ctx.fillStyle = "rgba(255,255,255,0.08)";
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * RD * ((k % 7) / 7), cy + Math.sin(a * 1.3) * RD * ((k % 5) / 5), RD * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    // terminator shadow
+    const dark = ctx.createLinearGradient(cx - RD, cy - RD, cx + RD, cy + RD);
+    dark.addColorStop(0.45, "rgba(0,0,0,0)");
+    dark.addColorStop(1, body.kind === "star" ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.55)");
+    ctx.fillStyle = dark;
+    ctx.fillRect(cx - RD, cy - RD, RD * 2, RD * 2);
+    ctx.restore();
+
+    // the rope: glowing, with a flowing dash
+    ctx.save();
+    ctx.lineCap = ctx.lineJoin = "round";
+    const ropePath = () => {
+      ctx.beginPath();
+      if (!peak) {
+        const room = Math.min(w, h) / 2 - RD - 12;
+        ctx.arc(cx, cy, RD + spring(anim.gap, Math.max(10, Math.min(room, view.gapRatio * RD))), 0, Math.PI * 2);
+      } else {
+        const th = spring(anim.theta, view.theta);
+        const peakR = RD / Math.cos(th);
+        const tx = RD * Math.sin(th);
+        const ty = RD * Math.cos(th);
+        ctx.moveTo(cx - tx, cy - ty);
+        ctx.lineTo(cx, cy - peakR);
+        ctx.lineTo(cx + tx, cy - ty);
+        ctx.arc(cx, cy, RD + 1, -Math.PI / 2 + th, -Math.PI / 2 - th + Math.PI * 2);
+      }
+    };
+    ctx.shadowColor = "rgba(255,170,90,0.9)";
+    ctx.shadowBlur = 16;
+    ctx.strokeStyle = "#ffb15e";
+    ctx.lineWidth = 3;
+    ropePath();
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+    ctx.setLineDash([2, 14]);
+    ctx.lineDashOffset = -t * 30;
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 2;
+    ropePath();
+    ctx.stroke();
+    ctx.restore();
+
+    // measurement callout
+    ctx.strokeStyle = "rgba(255,255,255,0.7)";
+    ctx.fillStyle = "#fff";
+    ctx.lineWidth = 1.2;
+    ctx.font = "700 14px -apple-system, Inter, sans-serif";
+    if (!peak) {
+      const g = anim.gap.x;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - RD);
+      ctx.lineTo(cx, cy - RD - g);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - RD - g / 2);
+      ctx.lineTo(cx + 46, cy - RD - g / 2 - 26);
+      ctx.lineTo(cx + 96, cy - RD - g / 2 - 26);
+      ctx.stroke();
+      ctx.textAlign = "left";
+      ctx.fillText(length(uniformGap(state.extra)), cx + 100, cy - RD - g / 2 - 21);
+    } else {
+      const peakY = cy - RD / Math.cos(anim.theta.x);
+      const pulse = 4 + Math.sin(t * 4) * 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, peakY, pulse, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.textAlign = "center";
+      ctx.fillText(`${length(peakLift(state.R, state.extra).height)} high`, cx, Math.max(18, peakY - 16));
+    }
+  },
+});
 
 function drawGlobe() {
-  for (const el of [...globe.children]) if (el.tagName !== "title") el.remove();
-  svg("circle", { cx: C, cy: C, r: RD, style: { fill: "var(--accent-soft)", stroke: "var(--accent)", strokeWidth: 2 } }, globe);
-  // a couple of latitude lines for a "planet" feel
-  for (const k of [0.45, 0.8]) svg("ellipse", { cx: C, cy: C, rx: RD, ry: RD * k * 0.35, style: { fill: "none", stroke: "var(--accent)", strokeOpacity: 0.25 } }, globe);
-
   let exaggerated = false;
   if (state.mode === "even") {
-    const gap = uniformGap(state.extra);
-    let gapPx = (gap / state.R) * RD;
-    if (gapPx < 10) {
-      gapPx = 10;
-      exaggerated = true;
-    }
-    gapPx = Math.min(gapPx, 34);
-    svg("circle", { cx: C, cy: C, r: RD + gapPx, style: { fill: "none", stroke: "var(--chart-2)", strokeWidth: 3 } }, globe);
-    svg("line", { x1: C, x2: C, y1: C - RD, y2: C - RD - gapPx, style: { stroke: "var(--ink)", strokeWidth: 1.5 } }, globe);
-    svg("text", { x: C + 8, y: C - RD - gapPx / 2 + 4, text: length(gap), style: { fill: "var(--ink)", fontSize: "13px", fontWeight: 700 } }, globe);
+    const ratio = uniformGap(state.extra) / state.R;
+    // Below ~4% of the radius the gap would be invisible: draw it bigger (and say so).
+    view.gapRatio = ratio < 0.04 ? 0.04 + Math.log10(1 + state.extra) * 0.06 : ratio;
+    exaggerated = ratio < 0.04 ? "bigger" : ratio > 0.55 ? "smaller" : false;
   } else {
-    const { theta } = peakLift(state.R, state.extra);
-    let t = theta;
+    let t = peakLift(state.R, state.extra).theta;
     if (t < (4 * Math.PI) / 180) {
-      t = (30 * Math.PI) / 180;
+      t = (12 + Math.log10(1 + state.extra) * 14) * (Math.PI / 180);
       exaggerated = true;
     }
-    const peakR = RD / Math.cos(t);
-    const peakY = Math.max(C - peakR, 6);
-    const tx = RD * Math.sin(t);
-    const ty = RD * Math.cos(t);
-    // rope: tangent, peak, tangent, then the rest of the circle on the ground
-    const d = `M ${C - tx} ${C - ty} L ${C} ${peakY} L ${C + tx} ${C - ty} A ${RD} ${RD} 0 1 1 ${C - tx} ${C - ty}`;
-    svg("path", { d, style: { fill: "none", stroke: "var(--chart-2)", strokeWidth: 3, strokeLinejoin: "round" } }, globe);
-    svg("circle", { cx: C, cy: peakY, r: 4, style: { fill: "var(--chart-2)" } }, globe);
+    view.theta = Math.min(t, 1.1);
   }
-  $("#globe-title").textContent =
+  const body = bodyFor(state.R);
+  $("#hud-body").textContent = body.name;
+  if (state.mode === "even") {
+    $("#hud-label").textContent = "Gap under the rope";
+    $("#hud-value").textContent = length(uniformGap(state.extra));
+  } else {
+    $("#hud-label").textContent = "Peak height";
+    $("#hud-value").textContent = length(peakLift(state.R, state.extra).height);
+  }
+  planet.setLabel(
     state.mode === "even"
-      ? `Sphere with rope floating evenly ${length(uniformGap(state.extra))} above it`
-      : `Sphere with rope pulled up to a single peak`;
-  $("#globe-caption").textContent = exaggerated
-    ? "Schematic. The rope’s offset is exaggerated so you can see it; the numbers are exact."
-    : "Drawn to scale.";
+      ? `${body.name} with rope floating evenly ${length(uniformGap(state.extra))} above it`
+      : `${body.name} with rope pulled up to a single peak ${length(peakLift(state.R, state.extra).height)} high`,
+  );
+  $("#globe-caption").textContent =
+    exaggerated === "smaller"
+      ? "The gap is drawn shorter so it fits on screen; the numbers are exact."
+      : exaggerated
+        ? "The rope’s offset is exaggerated so you can see it; the numbers are exact."
+        : "Drawn to scale.";
 }
 
 // ---------- Stats ----------

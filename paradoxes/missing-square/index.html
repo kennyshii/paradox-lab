@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="missing-square">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -74,8 +74,12 @@
                 <label class="check"><input type="checkbox" id="show-sliver" /> Highlight the sliver between them</label>
               </div>
             </div>
-            <figure class="viz" style="margin: 0">
-              <svg id="board" role="img" aria-labelledby="board-desc"></svg>
+            <figure style="margin: 0">
+              <div class="stage board-stage" id="board-stage">
+                <svg id="board" role="img" aria-labelledby="board-desc"></svg>
+                <svg id="lens" class="lens" aria-hidden="true"><use href="#board-art"></use><line id="lens-true" /></svg>
+                <span class="lens-hint" aria-hidden="true">Hover or drag over the figure to magnify the edge</span>
+              </div>
               <figcaption class="viz-caption" id="board-desc"></figcaption>
             </figure>
             <div class="table-wrap">

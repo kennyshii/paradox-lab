@@ -99,3 +99,7 @@
 #start .btn[aria-pressed="false"] {
   border-color: var(--bad);
 }
+
+.osc-stage {
+  min-height: 300px;
+}

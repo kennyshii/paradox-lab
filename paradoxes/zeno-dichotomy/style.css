@@ -10,3 +10,7 @@
 .track svg {
   display: block;
 }
+
+.tiling-stage {
+  min-height: 300px;
+}

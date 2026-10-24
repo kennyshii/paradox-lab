@@ -33,6 +33,9 @@ export function bindRange(input, { output, format = String, onInput } = {}) {
     const text = format(value);
     if (output) output.textContent = text;
     input.setAttribute("aria-valuetext", text);
+    const min = Number(input.min || 0);
+    const max = Number(input.max || 100);
+    input.style.setProperty("--fill", `${((value - min) / (max - min || 1)) * 100}%`);
     onInput?.(value);
   };
   input.addEventListener("input", update);
@@ -47,9 +50,24 @@ export function bindRange(input, { output, format = String, onInput } = {}) {
 export function segmented(group, { onChange } = {}) {
   const buttons = $$("button[data-value]", group);
   let current = buttons.find((b) => b.getAttribute("aria-pressed") === "true")?.dataset.value ?? buttons[0]?.dataset.value;
+
+  // A sliding "thumb" behind the pressed button, so the selection glides between options.
+  const thumb = h("span", { class: "seg-thumb", "aria-hidden": "true" });
+  group.prepend(thumb);
+  group.classList.add("has-thumb");
+  const place = () => {
+    const b = buttons.find((x) => x.dataset.value === current);
+    if (!b || !b.offsetWidth) return;
+    thumb.style.width = `${b.offsetWidth}px`;
+    thumb.style.height = `${b.offsetHeight}px`;
+    thumb.style.transform = `translate(${b.offsetLeft}px, ${b.offsetTop}px)`;
+  };
+  new ResizeObserver(place).observe(group);
+
   const set = (value, { silent = false } = {}) => {
     current = value;
     for (const b of buttons) b.setAttribute("aria-pressed", String(b.dataset.value === value));
+    place();
     if (!silent) onChange?.(value);
   };
   for (const b of buttons) b.addEventListener("click", () => set(b.dataset.value));

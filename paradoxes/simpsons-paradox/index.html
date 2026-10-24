@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-    <script type="module" src="main.js"></script>
+    <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="simpsons-paradox">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -66,6 +66,15 @@
               <legend>Groups included</legend>
               <div id="toggles" class="btn-row"></div>
             </fieldset>
+
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary merge-btn" id="merge" aria-pressed="false">Merge the groups</button>
+            </div>
+            <div class="stage bubble-stage" id="bubbles"></div>
+            <p class="viz-caption">
+              Height is the success rate; bubble area is the number of cases. Press <em>Merge the groups</em> and watch the
+              big, hard groups drag each arm’s overall rate around.
+            </p>
 
             <div id="verdict" aria-live="polite"></div>
 
