@@ -10,7 +10,7 @@ Each paradox gets its own small lab. You make a guess, play with the idea (slide
 | 🟠 **Falsidical** | Seems true, but the argument hides a flaw | Missing square · All horses are the same colour · Zeno’s dichotomy |
 | 🟣 **Antinomy** | A genuine contradiction in logic | Liar paradox · Russell’s paradox & the barber |
 
-**Live demo:** https://your-username.github.io/paradox-lab/ <!-- TODO: replace after enabling GitHub Pages -->
+**Live demo:** https://kennyshii.github.io/paradox-lab/ <!-- live once GitHub Pages is enabled -->
 
 ![Home page: a filterable grid of paradox cards](docs/screenshot-home.svg)
 <!-- TODO: replace with a real screenshot, e.g. docs/screenshot-home.png -->
