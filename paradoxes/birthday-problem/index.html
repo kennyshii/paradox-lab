@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="birthday-problem">
@@ -98,39 +95,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Count the chance of no match</h3>
-          <p>
-            It’s easier to compute the probability that all \(n\) birthdays are <em>different</em>. The first person can
-            have any birthday; the second must avoid one day, the third must avoid two, and so on:
-          </p>
-          $$P(\text{no match}) = \frac{365}{365}\cdot\frac{364}{365}\cdot\frac{363}{365}\cdots\frac{365-n+1}{365} = \prod_{k=0}^{n-1}\left(1-\frac{k}{365}\right).$$
-          $$P(\text{at least one match}) = 1 - \prod_{k=0}^{n-1}\left(1-\frac{k}{365}\right).$$
-          <p>For \(n = 23\) this gives \(1 - 0.4927 \approx 0.507\).</p>
-
-          <h3>Pairs, not people</h3>
-          <p>
-            Intuition asks “will someone match <em>me</em>?”, which has only \(n-1\) chances. But a match can happen
-            between <em>any</em> two people, and the number of pairs grows quadratically:
-          </p>
-          $$\binom{n}{2} = \frac{n(n-1)}{2}, \qquad \binom{23}{2} = 253.$$
-          <p>
-            Each pair matches with probability \(1/365\). Treating pairs as roughly independent gives a handy
-            approximation:
-          </p>
-          $$P(\text{match}) \approx 1 - e^{-n(n-1)/(2\cdot 365)} \quad\Longrightarrow\quad n \approx \sqrt{2\cdot 365\,\ln 2} \approx 22.5.$$
-          <p>
-            In general you need about \(\sqrt{d}\) items, not \(d/2\), before collisions among \(d\) possibilities
-            become likely. That same square root is why cryptographers worry about “birthday attacks” on hash
-            functions.
-          </p>
-
-          <h3>Why it’s veridical</h3>
-          <p>
-            The calculation is correct and the simulation agrees with it. Real birthdays aren’t perfectly uniform
-            (there are seasonal peaks), but that only makes matches <em>more</em> likely.
-          </p>
-        </div>
+        <div data-explainer data-title="The birthday problem, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🎂</span>
+            <h3>It’s not about your birthday</h3>
+            <p>Matching your own birthday is rare. But the question asks about any two people, and that’s a very different number of chances.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🤝</span>
+            <h3>Count the pairs</h3>
+            <p>23 people form 253 different pairs. Each pair is a small chance of a shared birthday, and 253 small chances add up to just over 50%.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">📈</span>
+            <h3>Pairs grow fast</h3>
+            <p>Double the people and the pairs roughly quadruple. That’s why 70 people make a match almost certain.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

@@ -4,6 +4,8 @@ import { lineChart } from "../../assets/js/lib/chart.js";
 import { fmt, length } from "../../assets/js/lib/format.js";
 import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { uniformGap, peakLift, liftProfile } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -379,3 +381,5 @@ segmented($("[data-mode]"), {
 state.R = 10 ** Number(radiusInput.value);
 buildChart();
 render();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

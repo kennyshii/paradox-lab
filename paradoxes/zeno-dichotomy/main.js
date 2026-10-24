@@ -5,6 +5,8 @@ import { tween } from "../../assets/js/lib/sim.js";
 import { fmt, pct, length } from "../../assets/js/lib/format.js";
 import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { covered, remaining, harmonicPartial, checkpointsPassed, timeAt } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -277,3 +279,5 @@ $("#reset").addEventListener("click", () => {
 $("#harmonic").addEventListener("change", renderChart);
 
 render();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

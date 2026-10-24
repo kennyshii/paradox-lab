@@ -4,6 +4,8 @@ import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { prefersReducedMotion } from "../../assets/js/lib/sim.js";
 import { svg } from "../../assets/js/lib/chart.js";
 import { reducedWords, pieceOf, inShiftedPiece } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -36,24 +38,26 @@ function colourFor(word, mode) {
   return COLOR.B;
 }
 
+const STEP = { a: "right", A: "left", b: "up", B: "down" };
+
 const DESCRIPTIONS = {
   pieces: {
-    legend: ["a", "A", "b", "B"].map((l) => [COLOR[l], `${NAME[l]}: words starting with ${l === "A" ? "a⁻¹" : l === "B" ? "b⁻¹" : l}`]),
-    text: "Every word except \\(e\\) starts with exactly one letter, so the group splits into four pieces by first letter. Each looks like a quarter of the tree.",
+    legend: ["a", "A", "b", "B"].map((l) => [COLOR[l], `Routes whose first step is ${STEP[l]}`]),
+    text: "Every route except the centre starts with exactly one first step, so the tree splits into four pieces. Each one looks like a quarter of the tree.",
   },
   a: {
     legend: [
-      [COLOR.a, "\\(a^{-1}W(a)\\): W(a) shifted one step"],
-      [COLOR.A, "W(a⁻¹), unchanged"],
+      [COLOR.a, "The “right” piece, shifted back one step"],
+      [COLOR.A, "The “left” piece, unchanged"],
     ],
-    text: "Shift \\(W(a)\\) by \\(a^{-1}\\): it now covers everything except the \\(a^{-1}\\) branch, about three quarters of the tree. Add \\(W(a^{-1})\\) back and you have the <strong>whole group</strong>, from just two of the four pieces.",
+    text: "Shift the “right” piece back one step towards the centre: it now covers everything except the “left” branch, about three quarters of the tree. Add the “left” piece back and you have the <strong>whole tree</strong>, from just two of the four pieces.",
   },
   b: {
     legend: [
-      [COLOR.b, "\\(b^{-1}W(b)\\): W(b) shifted one step"],
-      [COLOR.B, "W(b⁻¹), unchanged"],
+      [COLOR.b, "The “up” piece, shifted back one step"],
+      [COLOR.B, "The “down” piece, unchanged"],
     ],
-    text: "The other two pieces do the same with \\(b\\): \\(b^{-1}W(b) \\sqcup W(b^{-1})\\) is again the <strong>whole group</strong>. Four pieces, two complete copies.",
+    text: "The other two pieces do the same with up and down: again the <strong>whole tree</strong>. Four pieces, two complete copies.",
   },
 };
 
@@ -67,12 +71,12 @@ function draw(mode) {
   for (const n of nodes) {
     svg("circle", { cx: n.x, cy: n.y, r: n.depth ? 0.034 / (1 + n.depth * 0.6) : 0.045, style: { fill: colourFor(n.word, mode) } }, tree);
   }
-  svg("text", { x: 0.05, y: -0.05, text: "e", style: { fontSize: "0.09px", fontStyle: "italic", fill: "var(--ink)", fontFamily: "var(--font-serif)" } }, tree);
+  svg("text", { x: 0.05, y: -0.05, text: "start", style: { fontSize: "0.09px", fontStyle: "italic", fill: "var(--ink)", fontFamily: "var(--font-serif)" } }, tree);
 
   const d = DESCRIPTIONS[mode];
   $("#legend").innerHTML = d.legend.map(([c, label]) => `<li><span class="swatch is-dot" style="--swatch:${c}"></span>${label}</li>`).join("");
   $("#tree-desc").innerHTML = `<p>${d.text}</p>`;
-  tree.setAttribute("aria-label", `Tree of the free group F2 to depth ${DEPTH}, coloured to show: ${mode === "pieces" ? "the four pieces" : `the shifted piece ${mode}`}.`);
+  tree.setAttribute("aria-label", `A tree of routes, ${DEPTH} steps deep, coloured to show ${mode === "pieces" ? "the four pieces" : mode === "a" ? "the right and left pieces forming a whole copy" : "the up and down pieces forming a whole copy"}.`);
   renderMath($("#legend"));
   renderMath($("#tree-desc"));
 }
@@ -195,3 +199,5 @@ function setPhase(k) {
 }
 setPhase(0);
 draw("pieces");
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

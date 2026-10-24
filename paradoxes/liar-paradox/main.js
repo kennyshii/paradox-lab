@@ -3,6 +3,8 @@ import { $, h, segmented } from "../../assets/js/lib/dom.js";
 import { FACTS, PRESETS, truthTable, verdict, revise, claimsUnder } from "./model.js";
 import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { prefersReducedMotion } from "../../assets/js/lib/sim.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -361,3 +363,5 @@ function render() {
 }
 
 render();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

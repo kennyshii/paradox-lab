@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="zeno-dichotomy">
@@ -49,7 +46,7 @@
             <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
           </div>
         </form>
-        <p hidden data-answer-text>\(\tfrac12 + \tfrac14 + \tfrac18 + \cdots = 1\). The infinitely many stages fit inside a finite distance <em>and</em> a finite time, since each stage takes half as long as the one before.</p>
+        <p hidden data-answer-text>Half plus a quarter plus an eighth, and so on forever, adds up to exactly one whole. The infinitely many stages fit inside a normal distance <em>and</em> a normal amount of time, because each one takes half as long as the one before.</p>
         <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
       </section>
 
@@ -87,7 +84,7 @@
             <div>
               <div class="btn-row" style="justify-content: space-between">
                 <h3 style="margin: 0">Adding up the steps</h3>
-                <label class="check"><input type="checkbox" id="harmonic" /> Compare with \(1 + \tfrac12 + \tfrac13 + \cdots\)</label>
+                <label class="check"><input type="checkbox" id="harmonic" /> Compare with 1 + ½ + ⅓ + ¼ + … (this one never stops growing)</label>
               </div>
               <div class="viz" id="chart" style="margin-top: 0.75rem"></div>
             </div>
@@ -97,40 +94,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>An infinite sum with a finite total</h3>
-          <p>After \(k\) stages you have covered</p>
-          $$S_k = \frac12 + \frac14 + \cdots + \frac1{2^k} = 1 - \frac1{2^k}.$$
-          <p>
-            No finite \(S_k\) reaches 1, but the gap \(2^{-k}\) can be made smaller than any distance you name. That is
-            precisely what it means for the infinite series to <em>converge</em> to 1:
-          </p>
-          $$\sum_{k=1}^{\infty} \frac1{2^k} = \lim_{k\to\infty} \left(1 - \frac1{2^k}\right) = 1.$$
-
-          <h3>Time shrinks too</h3>
-          <p>
-            Walking at a steady speed, each stage takes half the time of the one before. If crossing takes 10 seconds,
-            the stages take 5 s, 2.5 s, 1.25 s, …, and those add up to 10 s as well. Zeno’s hidden premise is that
-            infinitely many tasks must take infinitely long. That’s true only if each takes at least some fixed minimum
-            time, and these don’t.
-          </p>
-
-          <h3>Not every infinite sum converges</h3>
-          <p>
-            Shrinking terms aren’t enough on their own. The harmonic series \(1 + \tfrac12 + \tfrac13 + \cdots\) has
-            terms that shrink to zero, yet its partial sums grow without bound (roughly like \(\ln k\)). Zeno’s series
-            converges because its terms shrink <em>geometrically</em>. Tick the comparison box in the lab to see the
-            difference.
-          </p>
-
-          <h3>Why it’s falsidical</h3>
-          <p>
-            The argument relies on a premise that seems obvious but is false: that a sum of infinitely many positive
-            amounts must be infinite. The rigorous theory of limits, developed in the 19th century by Cauchy and
-            Weierstrass, shows exactly when infinite sums are finite. (Some philosophers argue a deeper puzzle remains,
-            about how one can “complete” an infinite sequence of acts, but the mathematical core is settled.)
-          </p>
-        </div>
+        <div data-explainer data-title="Zeno’s paradox, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🚶</span>
+            <h3>Shrinking steps</h3>
+            <p>Each half-step is shorter than the last, and takes less time too. So the steps get smaller and quicker forever.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🟦</span>
+            <h3>Infinitely many pieces, one total</h3>
+            <p>Lay the halves side by side and they fill exactly one whole: ½ plus ¼ plus ⅛ and so on never goes past 1.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">⏱️</span>
+            <h3>You arrive on time</h3>
+            <p>Walking at a steady pace, you reach the door when you expect. The “infinitely many steps” are just a way of slicing up an ordinary walk.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

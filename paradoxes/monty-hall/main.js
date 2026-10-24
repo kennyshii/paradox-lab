@@ -5,6 +5,8 @@ import { Tally, runTrials, prefersReducedMotion } from "../../assets/js/lib/sim.
 import { fmt, pct, fraction } from "../../assets/js/lib/format.js";
 import { confetti, stageCanvas } from "../../assets/js/lib/fx.js";
 import { newRound, hostLeavesClosed, hostOpens, simulate, theory } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -315,3 +317,5 @@ segmented($("[data-doors]"), {
 
 newGame();
 renderSim();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="liar-paradox">
@@ -101,42 +98,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>The T-schema</h3>
-          <p>
-            Tarski’s classic principle about truth says that for any sentence \(S\) that asserts \(p\):
-          </p>
-          $$S \text{ is true} \iff p.$$
-          <p>The liar \(L\) asserts “\(L\) is false”, i.e. \(p = \lnot T(L)\). Plugging in gives</p>
-          $$T(L) \iff \lnot T(L),$$
-          <p>
-            which has no solution in two-valued logic. That is exactly what an empty truth table means: no row survives.
-          </p>
-
-          <h3>Loops, not just self-reference</h3>
-          <p>
-            Self-reference alone isn’t the culprit. The truth-teller “This sentence is true” is self-referential but has
-            <em>two</em> consistent rows: it’s underdetermined rather than contradictory. And a liar can be spread
-            across several sentences (“The next sentence is true.” “The previous sentence is false.”): no single
-            sentence talks about itself, yet the cycle as a whole has an odd number of negations and no consistent
-            assignment. Sentences that bottom out in facts about the world (“Snow is white”) are <em>grounded</em> and
-            get exactly one value.
-          </p>
-
-          <h3>Why it’s an antinomy</h3>
-          <p>
-            Every premise looks like basic logic: sentences are true or false, and the T-schema holds. Yet together
-            they produce a contradiction. Proposed resolutions all give something up:
-          </p>
-          <ul>
-            <li><strong>Hierarchy (Tarski):</strong> a language can’t contain its own truth predicate; “true” for level-\(n\) sentences lives at level \(n+1\).</li>
-            <li><strong>Truth-value gaps (Kripke):</strong> ungrounded sentences like the liar get no value at all.</li>
-            <li><strong>Dialetheism (Priest):</strong> accept that the liar is both true and false, using a paraconsistent logic so the contradiction doesn’t spread.</li>
-          </ul>
-          <p>
-            The same diagonal trick powers Gödel’s incompleteness theorems and Russell’s paradox, which is next door.
-          </p>
-        </div>
+        <div data-explainer data-title="The liar paradox, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🔄</span>
+            <h3>It flips forever</h3>
+            <p>If the sentence is true, it says it’s false. If it’s false, it’s telling the truth. Every answer turns into its opposite.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🪞</span>
+            <h3>The problem is self-reference</h3>
+            <p>The sentence talks about its own truth. Most sentences talk about the world, like “snow is white”, and cause no trouble.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🪜</span>
+            <h3>The fix: levels</h3>
+            <p>Logicians keep sentences and sentences about sentences on separate levels, so no sentence can judge itself.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

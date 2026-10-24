@@ -219,6 +219,19 @@ const centerText = (ctx, S, lines, px) => {
 };
 
 export const SHAPES = {
+  "infinite-hotel"(ctx, S) {
+    const dw = S * 0.1;
+    for (let i = 0; i < 6; i++) {
+      const x = S * 0.08 + i * S * 0.145;
+      ctx.globalAlpha = 1 - i * 0.14;
+      ctx.fillRect(x, S * 0.5, dw, S * 0.26);
+    }
+    ctx.globalAlpha = 1;
+    ctx.save();
+    ctx.translate(0, -S * 0.2);
+    centerText(ctx, S, ["∞"], S * 0.4);
+    ctx.restore();
+  },
   "rope-around-earth"(ctx, S) {
     ctx.beginPath();
     ctx.arc(S / 2, S / 2, S * 0.3, 0, Math.PI * 2);
@@ -291,17 +304,8 @@ export const SHAPES = {
     ctx.fillRect(x0 + 10 * u, y0 - u, u, u);
     ctx.globalCompositeOperation = "source-over";
   },
-  "all-horses-same-color"(ctx, S) {
-    const dw = S * 0.07;
-    const dh = S * 0.34;
-    for (let i = 0; i < 6; i++) {
-      ctx.save();
-      const x = S * 0.12 + i * S * 0.14 + (i > 0 ? S * 0.06 : 0);
-      ctx.translate(x + dw, S * 0.68);
-      if (i === 0) ctx.rotate(0.55);
-      ctx.fillRect(-dw, -dh, dw, dh);
-      ctx.restore();
-    }
+  "missing-dollar"(ctx, S) {
+    centerText(ctx, S, ["$1 ?"], S * 0.34);
   },
   "zeno-dichotomy"(ctx, S) {
     ctx.lineWidth = S * 0.018;

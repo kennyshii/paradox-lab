@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="missing-square">
@@ -93,40 +90,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Two slopes that look the same</h3>
-          <p>The “hypotenuse” is made of the long edges of the two triangles. Their slopes are</p>
-          $$\text{large triangle: } \frac{3}{8} = 0.375, \qquad \text{small triangle: } \frac{2}{5} = 0.4, \qquad \text{true diagonal: } \frac{5}{13} \approx 0.385.$$
-          <p>
-            Because the slopes differ, the two edges don’t line up into one straight line. In the first arrangement the
-            shallow triangle comes first, so the edge sags <em>below</em> the true diagonal. In the second the steep one
-            comes first, so it bulges <em>above</em> it. The largest deviation is only \(1/13\) of a square, which is
-            invisible at a glance.
-          </p>
-
-          <h3>Counting the area</h3>
-          <p>The pieces have total area</p>
-          $$\underbrace{12}_{8\times 3/2} + \underbrace{5}_{5\times2/2} + 8 + 7 = 32.$$
-          <p>A genuine 13 × 5 triangle would have area \(13 \times 5 / 2 = 32.5\). So:</p>
-          <ul>
-            <li>Arrangement 1 is a slightly <em>concave</em> shape of area \(32 = 32.5 - 0.5\).</li>
-            <li>Arrangement 2 is a slightly <em>convex</em> shape of area \(33 = 32.5 + 0.5\), which is 32 of pieces plus the 1-square hole.</li>
-          </ul>
-          <p>
-            Each sliver between the bent edge and the true diagonal is a thin triangle; its area comes from the
-            cross-product of its sides:
-          </p>
-          $$\tfrac12\,\lvert 8\cdot 5 - 3\cdot 13\rvert = \tfrac12, \qquad \tfrac12\,\lvert 5\cdot 5 - 2\cdot 13\rvert = \tfrac12.$$
-          <p>The two half-square slivers add up to exactly the missing square.</p>
-
-          <h3>Why it’s falsidical</h3>
-          <p>
-            The argument “same pieces, same triangle, so same area” has a false premise hidden in plain sight: the
-            figures are not triangles. The puzzle works because 2, 3, 5, 8 and 13 are consecutive
-            <a href="https://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci numbers</a>, whose ratios are all
-            close to each other, so the bend is tiny.
-          </p>
-        </div>
+        <div data-explainer data-title="The missing square, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">📐</span>
+            <h3>The edge isn’t straight</h3>
+            <p>The two triangles have slightly different slopes. Put together, the long edge bends a tiny bit instead of being a straight line.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">↕️</span>
+            <h3>In one, out the other</h3>
+            <p>In one arrangement the edge sags inward; in the other it bulges outward. The difference between them is exactly one square.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">👀</span>
+            <h3>Our eyes round things off</h3>
+            <p>The bend is far too small to notice, so we assume both shapes are the same triangle. They aren’t.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

@@ -23,18 +23,25 @@ export const TYPES = {
 
 export const PARADOXES = [
   {
+    slug: "infinite-hotel",
+    title: "Hilbert’s Infinite Hotel",
+    type: "veridical",
+    teaser: "Every room is full. A guest arrives, then a bus with infinitely many more. Watch the hotel fit them all.",
+    reason: "Nothing is wrong with the argument: infinity really does behave this way, and mathematicians rely on it.",
+  },
+  {
     slug: "rope-around-earth",
     title: "Rope Around the Earth",
     type: "veridical",
     teaser: "Add one metre to a rope hugging the equator. How high does it float? Higher than you think.",
-    reason: "The algebra is airtight: the gap is ΔL / 2π no matter how big the sphere is.",
+    reason: "It checks out: the gap depends only on the extra rope, never on the size of the planet.",
   },
   {
     slug: "monty-hall",
     title: "The Monty Hall Problem",
     type: "veridical",
     teaser: "Three doors, one car. The host opens a goat. Switching wins twice as often, and you can prove it.",
-    reason: "Simulation and probability theory agree: switching wins 2/3 of the time.",
+    reason: "It’s genuinely true: play it a few thousand times and switching wins two games out of three.",
   },
   {
     slug: "birthday-problem",
@@ -48,14 +55,14 @@ export const PARADOXES = [
     title: "Simpson’s Paradox",
     type: "veridical",
     teaser: "A treatment can win in every group and still lose overall. Toggle groups and watch the trend flip.",
-    reason: "Real datasets show it: aggregation with unequal group sizes really can reverse a trend.",
+    reason: "It happens in real data: lumping uneven groups together really can flip the result.",
   },
   {
     slug: "banach-tarski",
     title: "The Banach–Tarski Paradox",
     type: "veridical",
     teaser: "Cut a ball into five pieces, move them rigidly, and get two balls of the same size.",
-    reason: "It is a proven theorem of standard set theory (ZFC, with the axiom of choice).",
+    reason: "It’s a proven theorem. The pieces are just too strange to have a size.",
   },
   {
     slug: "missing-square",
@@ -65,32 +72,32 @@ export const PARADOXES = [
     reason: "The ‘triangle’ is not a triangle: its hypotenuse is slightly bent.",
   },
   {
-    slug: "all-horses-same-color",
-    title: "All Horses Are the Same Colour",
+    slug: "missing-dollar",
+    title: "The Missing Dollar Riddle",
     type: "falsidical",
-    teaser: "A tidy induction proof that every horse shares one colour. Step through it and find the crack.",
-    reason: "The proof looks valid, but the inductive step silently fails going from 1 to 2.",
+    teaser: "Three friends, a $30 room and a sneaky bellhop. $27 + $2 = $29… so where did the last dollar go?",
+    reason: "Every coin is accounted for. The riddle just adds two numbers that don’t belong together.",
   },
   {
     slug: "zeno-dichotomy",
     title: "Zeno’s Dichotomy",
     type: "falsidical",
     teaser: "To cross a room you must first cross half of it, then half the rest, forever. So how do you ever arrive?",
-    reason: "The argument assumes infinitely many steps must take infinite time. Convergent series say otherwise.",
+    reason: "The argument assumes infinitely many steps must take forever. Shrinking steps can add up to a normal walk.",
   },
   {
     slug: "liar-paradox",
     title: "The Liar Paradox",
     type: "antinomy",
     teaser: "“This sentence is false.” Build self-referential sentences and see which ones can have a truth value.",
-    reason: "Ordinary rules for ‘true’ and ‘false’ give no consistent value at all.",
+    reason: "No matter which answer you pick, the sentence flips it. Ordinary true and false simply break.",
   },
   {
     slug: "russells-paradox",
     title: "Russell’s Paradox & the Barber",
     type: "antinomy",
     teaser: "The barber shaves everyone who does not shave himself. Who shaves the barber?",
-    reason: "Naive set theory proves the set of all non-self-membered sets both is and is not a member of itself.",
+    reason: "The rule contradicts itself whichever way you answer, so the barber (and Russell’s collection) can’t exist.",
   },
 ];
 

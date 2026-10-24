@@ -9,11 +9,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <!-- data-slug must match the folder name and the registry entry -->
@@ -48,7 +45,7 @@
             <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
           </div>
         </form>
-        <!-- Shown after the guess. KaTeX works here: \( x^2 \) -->
+        <!-- Shown after the guess. KaTeX works here:  x^2  -->
         <p hidden data-answer-text>The one-sentence answer.</p>
         <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
       </section>
@@ -68,15 +65,29 @@
         </div>
       </section>
 
-      <!-- 4. Explanation: hidden until the reader guesses (data-reveal). Use $$…$$ and \(…\) for maths -->
+      <!-- 4. Explanation: hidden until the reader guesses (data-reveal). Use $$…$$ and … for maths -->
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <p>The explanation, with equations like</p>
-          $$f(n) = n^2.$$
-          <h3>Why it’s [type]</h3>
-          <p>Connect the explanation back to the category.</p>
-        </div>
+        <!-- The explainer video: scenes live in explainer.js. Keep it conceptual: no equations. -->
+        <div data-explainer data-title="Your paradox, explained"></div>
+        <!-- Three plain-language takeaways -->
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">💡</span>
+            <h3>The key idea</h3>
+            <p>One or two sentences, in everyday words.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🔍</span>
+            <h3>Where intuition slips</h3>
+            <p>What our gut assumes, and why that assumption fails here.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🧭</span>
+            <h3>Why it’s [type]</h3>
+            <p>Connect the explanation back to the category.</p>
+          </li>
+        </ul>
       </section>
 
       <!-- 5. Further reading -->

@@ -3,9 +3,11 @@ import { mountPage } from "../../assets/js/page.js";
 import { $, bindRange } from "../../assets/js/lib/dom.js";
 import { lineChart } from "../../assets/js/lib/chart.js";
 import { fmt } from "../../assets/js/lib/format.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
 import { curve, valueAt } from "./model.js";
+import { scenes } from "./explainer.js";
 
-mountPage(); // header, footer, hero, guess widget, KaTeX, pager
+mountPage(); // header, footer, hero, guess widget, pager
 
 const chart = lineChart($("#chart"), {
   x: { domain: [1, 100], label: "n", format: (v) => fmt(v) },
@@ -23,3 +25,5 @@ bindRange($("#n"), {
     $("#stats").innerHTML = `<div class="stat"><div class="stat-label">f(n)</div><div class="stat-value">${fmt(valueAt(n))}</div></div>`;
   },
 });
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes });

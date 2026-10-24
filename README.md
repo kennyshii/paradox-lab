@@ -2,12 +2,12 @@
 
 **Interactive explorations of famous paradoxes: arguments that feel wrong, and why.**
 
-Each paradox gets its own small lab. You make a guess, play with the idea (sliders, simulations, step-through proofs), and then read the math or logic that explains what intuition missed. Every paradox is tagged with one of W. V. O. Quine’s three types:
+Each paradox gets its own small lab. You make a guess, play with the idea (simulations, animations, things to drag and push), and then watch a short captioned explainer video that shows, in plain language, what intuition missed. No equations required. Every paradox is tagged with one of W. V. O. Quine’s three types:
 
 | Type | Meaning | In the lab |
 | --- | --- | --- |
-| 🟢 **Veridical** | Counterintuitive, but true | Rope around the Earth · Monty Hall · Birthday problem · Simpson’s paradox · Banach–Tarski |
-| 🟠 **Falsidical** | Seems true, but the argument hides a flaw | Missing square · All horses are the same colour · Zeno’s dichotomy |
+| 🟢 **Veridical** | Counterintuitive, but true | Hilbert’s infinite hotel · Rope around the Earth · Monty Hall · Birthday problem · Simpson’s paradox · Banach–Tarski |
+| 🟠 **Falsidical** | Seems true, but the argument hides a flaw | Missing square · Missing dollar riddle · Zeno’s dichotomy |
 | 🟣 **Antinomy** | A genuine contradiction in logic | Liar paradox · Russell’s paradox & the barber |
 
 **Live demo:** https://kennyshii.github.io/paradox-lab/ <!-- live once GitHub Pages is enabled -->
@@ -22,25 +22,27 @@ Each paradox gets its own small lab. You make a guess, play with the idea (slide
 
 | Paradox | What you can do |
 | --- | --- |
+| [Hilbert’s infinite hotel](paradoxes/infinite-hotel/) | Run a full hotel with infinitely many rooms: check in a new guest, a coach, an infinite bus, even infinitely many buses, and watch every guest hop to a new room. Ask any guest where they ended up. |
 | [Rope around the Earth](paradoxes/rope-around-earth/) | Drag the sphere radius from a basketball to the Sun and watch the gap stay at ~16 cm. Switch to “pull up at one point” to see the same metre lift the rope ~121 m. |
 | [Monty Hall](paradoxes/monty-hall/) | Play the game with 3, 10 or 100 doors, then simulate thousands of rounds and watch stay/switch converge to 1/3 vs 2/3. |
 | [Birthday problem](paradoxes/birthday-problem/) | Slide the group size along a live probability curve; sample random groups on a calendar and run a Monte Carlo check. |
 | [Simpson’s paradox](paradoxes/simpsons-paradox/) | Toggle groups in the real kidney-stone and Berkeley-admissions datasets and watch the overall trend flip. |
 | [Banach–Tarski](paradoxes/banach-tarski/) | Explanation of the proof, with a free-group diagram showing four pieces rebuilding two copies. |
 | [Missing square](paradoxes/missing-square/) | Animate the pieces between arrangements, exaggerate the bend, and highlight the half-square slivers. |
-| [All horses are the same colour](paradoxes/all-horses-same-color/) | Step through the induction proof for any herd size and see the 1 → 2 link break. |
+| [Missing dollar riddle](paradoxes/missing-dollar/) | Follow all 30 coins between the friends, the hotel and the bellhop, then change the numbers and watch the “missing” dollar come and go. |
 | [Zeno’s dichotomy](paradoxes/zeno-dichotomy/) | Take half-steps toward the door, zoom into the remaining gap, then just walk across. Compare with the divergent harmonic series. |
 | [Liar paradox](paradoxes/liar-paradox/) | Build self-referential sentences, inspect their truth tables, and watch paradoxical ones flip forever under revision. |
 | [Russell’s paradox & the barber](paradoxes/russells-paradox/) | Fill in who shaves whom; then build Russell’s set as the flipped diagonal of a membership table. |
 
-Every page follows the same structure: **statement → guess → interactive lab → “why it works” (with KaTeX) → type badge and reason → further reading.**
+Every page follows the same structure: **statement → guess → interactive lab → “why it works” (a captioned explainer video plus three plain-language takeaways) → type badge and reason → further reading.**
 
 ## Tech
 
 - Plain HTML, CSS and JavaScript ES modules. **No build step, no framework, no backend.**
 - Charts and diagrams are hand-written SVG and Canvas (a reusable line chart with hover read-outs in [`assets/js/lib/chart.js`](assets/js/lib/chart.js), animated stages in [`assets/js/lib/fx.js`](assets/js/lib/fx.js)).
 - Apple-inspired motion: cross-page View Transitions morph a card's artwork into its lab, filters and guesses morph in place, and sections reveal on scroll. Everything respects `prefers-reduced-motion`.
-- [KaTeX](https://katex.org/) from a CDN for equations; that’s the only third-party code.
+- Every explanation is an animated, captioned explainer video drawn live on a canvas ([`assets/js/lib/explainer.js`](assets/js/lib/explainer.js)), with play/pause, a scrubber, keyboard control and a full transcript.
+- Zero third-party code.
 - Light and dark themes (follows the OS, with a toggle), keyboard accessible, respects `prefers-reduced-motion`.
 - Deploys as-is to GitHub Pages; all paths are relative, so it works under `/paradox-lab/`.
 
@@ -71,7 +73,7 @@ paradox-lab/
 ├── assets/
 │   ├── css/main.css            # design tokens (light/dark), layout, shared components
 │   └── js/
-│       ├── page.js             # shared shell: header, hero + badge, guess widget, KaTeX, pager
+│       ├── page.js             # shared shell: header, hero + badge, guess widget, pager
 │       ├── home.js             # home grid + type filter
 │       ├── config.js           # site name, repo URL
 │       ├── theme-init.js       # applies saved theme before first paint
@@ -81,6 +83,7 @@ paradox-lab/
 │           ├── random.js       # seedable PRNG, randInt, shuffle
 │           ├── dom.js          # h(), bindRange, segmented controls, safe storage
 │           ├── fx.js           # stageCanvas, morph (view transitions), confetti, countTo
+│           ├── explainer.js    # captioned explainer-video player and drawing kit
 │           ├── particles.js    # home-page particle morph and per-paradox silhouettes
 │           └── format.js       # percentages, lengths, fractions
 ├── paradoxes/

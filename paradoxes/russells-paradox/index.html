@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="russells-paradox">
@@ -28,8 +25,8 @@
           In a village, the barber shaves <em>all and only</em> the men who do not shave themselves. Does the barber
           shave himself? If he does, he’s a man who shaves himself, so the barber must not shave him. If he doesn’t,
           he’s a man who doesn’t shave himself, so the barber must shave him. Bertrand Russell found the same knot at
-          the foundations of mathematics: take the set \(R\) of all sets that are not members of themselves. Is \(R\)
-          a member of itself?
+          the foundations of mathematics: imagine the collection of every collection that doesn’t contain itself. Does
+          that collection contain itself?
         </p>
       </section>
 
@@ -37,11 +34,11 @@
         <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
         <form>
           <fieldset>
-            <legend>Is \(R = \{x : x \notin x\}\) a member of itself?</legend>
+            <legend>So who shaves the barber?</legend>
             <div class="guess-options">
-              <label class="guess-option" data-feedback="Then R contains itself, so it breaks its own rule. Try it below."><input type="radio" name="guess" value="yes" /> <span>Yes, \(R \in R\)</span></label>
-              <label class="guess-option" data-feedback="Then R qualifies for membership, so R ∈ R after all. Try it below."><input type="radio" name="guess" value="no" /> <span>No, \(R \notin R\)</span></label>
-              <label class="guess-option"><input type="radio" name="guess" value="neither" /> <span>Both answers contradict themselves: \(R\) can’t exist.</span></label>
+              <label class="guess-option" data-feedback="Then he’s a man who shaves himself, and the barber isn’t allowed to shave those. Try it below."><input type="radio" name="guess" value="yes" /> <span>He shaves himself.</span></label>
+              <label class="guess-option" data-feedback="Then he’s a man who doesn’t shave himself, so the barber has to shave him. Try it below."><input type="radio" name="guess" value="no" /> <span>Someone else does, or nobody.</span></label>
+              <label class="guess-option"><input type="radio" name="guess" value="neither" /> <span>Neither answer works. Such a barber can’t exist.</span></label>
             </div>
           </fieldset>
           <div class="btn-row">
@@ -49,7 +46,7 @@
             <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
           </div>
         </form>
-        <p hidden data-answer-text>\(R \in R \iff R \notin R\). Naive set theory, which lets any property define a set, is <strong>inconsistent</strong>. Modern set theory (ZFC) avoids it by restricting which sets you’re allowed to form.</p>
+        <p hidden data-answer-text>Every answer contradicts the rule, so the rule describes an impossible barber. Russell’s collection has the same problem, which is why mathematics now has stricter rules about which collections you’re allowed to make.</p>
         <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
       </section>
 
@@ -81,19 +78,19 @@
           <div class="card lab-panel" id="panel-sets" hidden>
             <h3>A tiny universe of sets</h3>
             <p style="margin: 0">
-              Each row is a set; a ✓ in column \(S_j\) means \(S_j\) is a member of that row’s set. Click any cell to
+              Each row is a collection; a ✓ in a column means that collection is inside the row’s collection. Click any cell to
               change it. The diagonal (outlined) records which sets contain <em>themselves</em>. The bottom row
-              builds \(R\) by flipping the diagonal.
+              builds R, the collection of everything that doesn’t contain itself, by flipping the diagonal.
             </p>
             <div class="table-wrap"><table class="data membership" id="membership"></table></div>
             <div id="diag-note" class="callout" aria-live="polite"></div>
             <div class="btn-row">
-              <button type="button" class="btn btn-primary" id="add-r">Add \(R\) to the universe</button>
+              <button type="button" class="btn btn-primary" id="add-r">Add R to the universe</button>
             </div>
             <div id="r-test" hidden>
               <div class="btn-row" role="group" aria-label="Suppose about R">
-                <button type="button" class="btn" data-r="true">Suppose \(R \in R\)</button>
-                <button type="button" class="btn" data-r="false">Suppose \(R \notin R\)</button>
+                <button type="button" class="btn" data-r="true">Suppose R contains itself</button>
+                <button type="button" class="btn" data-r="false">Suppose R doesn’t contain itself</button>
               </div>
               <div id="r-result" aria-live="polite"></div>
             </div>
@@ -103,42 +100,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Russell’s argument</h3>
-          <p>
-            Naive set theory has an <em>unrestricted comprehension</em> principle: for any property \(\varphi\), there is
-            a set of exactly the things with that property. Take \(\varphi(x) = x \notin x\):
-          </p>
-          $$R = \{\, x : x \notin x \,\} \qquad\text{so for every } x:\quad x \in R \iff x \notin x.$$
-          <p>Now let \(x\) be \(R\) itself:</p>
-          $$R \in R \iff R \notin R.$$
-          <p>A statement equivalent to its own negation is a contradiction, so naive set theory is inconsistent.</p>
-
-          <h3>The diagonal picture</h3>
-          <p>
-            The membership grid in the lab shows why. \(R\)’s row is the diagonal with every entry flipped, so \(R\)
-            disagrees with every set \(S_i\) at position \(i\). It can’t be any row of the table. If the table really
-            listed <em>all</em> sets, \(R\) would have to be one of its rows, and the diagonal cell \((R, R)\) would have
-            to equal its own opposite. This is the same diagonal argument Cantor used to show there are more real
-            numbers than whole numbers.
-          </p>
-
-          <h3>Barber vs. Russell</h3>
-          <p>
-            The barber version is milder: it just proves that <em>no such barber exists</em>, a perfectly fine
-            conclusion (a reductio). Russell’s version is a true antinomy because the offending set isn’t made up. It’s
-            guaranteed to exist by a principle that seemed self-evident and that Frege had built his foundations of
-            arithmetic on.
-          </p>
-
-          <h3>The fix</h3>
-          <p>
-            Zermelo–Fraenkel set theory (ZFC) replaces unrestricted comprehension with <em>separation</em>: you may only
-            carve a subset out of a set you already have, \(\{x \in A : \varphi(x)\}\). Running Russell’s argument then
-            just proves that \(\{x \in A : x \notin x\} \notin A\), so there is no set of all sets. Type theory, Russell’s
-            own fix, forbids the question “\(x \in x\)?” altogether.
-          </p>
-        </div>
+        <div data-explainer data-title="The barber and Russell’s paradox, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">💈</span>
+            <h3>The rule can’t be followed</h3>
+            <p>Whatever the barber does about his own beard breaks the rule. So the rule describes a barber who can’t exist.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">📦</span>
+            <h3>The same trap in maths</h3>
+            <p>Ask for the collection of all collections that don’t contain themselves. Does it contain itself? Same loop as the barber.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🏗️</span>
+            <h3>Mathematics got new rules</h3>
+            <p>Russell’s discovery forced mathematicians to set careful rules about which collections are allowed, so this one can’t be built.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

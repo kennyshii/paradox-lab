@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { PIECES, HOLE, SLIVERS, WIDTH, HEIGHT, area, placed } from "../paradoxes/missing-square/model.js";
-import { split, stepHolds, proofSteps } from "../paradoxes/all-horses-same-color/model.js";
+import { story } from "../paradoxes/missing-dollar/model.js";
 import { covered, harmonicPartial, checkpointsPassed, geometricPartial } from "../paradoxes/zeno-dichotomy/model.js";
 
 // Count which unit cells of the 13×5 box are covered by a set of polygons (sampling cell centres).
@@ -38,13 +38,19 @@ test("missing square: no overlaps in either arrangement, and B leaves exactly th
   assert.equal(area(HOLE), 1);
 });
 
-test("horses: only the 1 → 2 step fails", () => {
-  assert.deepEqual(split(2).overlap, []);
-  assert.equal(stepHolds(2), false);
-  for (let m = 3; m <= 10; m++) assert.equal(stepHolds(m), true, `m=${m}`);
-  const broken = proofSteps(2).filter((s) => !s.ok).map((s) => s.id);
-  assert.deepEqual(broken, ["link", "done"]);
-  assert.ok(proofSteps(5).every((s) => s.ok));
+test("missing dollar: the money always balances; only the bogus sum is off", () => {
+  const s = story();
+  assert.equal(s.friendsPaid, 27);
+  assert.equal(s.wrongSum, 29);
+  assert.equal(s.friendsPaid, s.price + s.kept); // the $2 is already inside the $27
+  assert.equal(s.price + s.kept + s.returned, 30);
+  for (let price = 20; price <= 29; price++) {
+    for (let kept = 0; kept <= 30 - price; kept += 0.5) {
+      const t = story({ price, kept });
+      assert.equal(t.price + t.kept + t.returned, 30);
+      assert.equal(t.wrongSum - t.paid, 2 * kept - (30 - price)); // the "missing" amount is just a meaningless sum
+    }
+  }
 });
 
 test("zeno: partial sums approach 1, harmonic sums grow without bound", () => {

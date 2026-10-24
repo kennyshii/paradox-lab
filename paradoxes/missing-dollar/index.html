@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Missing Dollar Riddle · Paradox Lab</title>
+    <meta name="description" content="Follow every coin in the classic missing dollar riddle and see why no dollar ever went missing." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="main.js" blocking="render"></script>
+  </head>
+  <body data-slug="missing-dollar">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          Three friends share a hotel room that costs $30, paying $10 each. The manager then realises the room is only
+          $25 and gives the bellhop $5 to return. The bellhop keeps $2 as a tip and gives each friend $1 back. So each
+          friend paid $9. Three times $9 is $27, and the bellhop has $2: that makes $29. Where did the other dollar go?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="none" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>Where is the missing dollar?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="Nobody took an extra dollar. Every coin can be accounted for.">
+                <input type="radio" name="guess" value="bellhop" /> <span>The bellhop secretly kept $3, not $2.</span>
+              </label>
+              <label class="guess-option" data-feedback="The hotel kept exactly $25. The trick is somewhere else.">
+                <input type="radio" name="guess" value="hotel" /> <span>The hotel kept an extra dollar.</span>
+              </label>
+              <label class="guess-option">
+                <input type="radio" name="guess" value="none" /> <span>No dollar is missing. The sum $27 + $2 is just the wrong thing to add.</span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>
+          Nothing is missing. The $2 the bellhop kept is already part of the $27 the friends paid, so adding it again
+          counts it twice. Follow every coin below.
+        </p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <div class="btn-row" style="justify-content: space-between">
+              <h3>Follow every coin</h3>
+              <div class="btn-row">
+                <button type="button" class="btn" id="back">← Back</button>
+                <button type="button" class="btn btn-primary" id="next">Next →</button>
+              </div>
+            </div>
+            <div class="stage money-stage" id="money"></div>
+            <ol class="story-dots" id="dots" aria-label="Story steps"></ol>
+            <p class="story-line" id="story" aria-live="polite"></p>
+            <div class="btn-row" role="group" aria-label="How to add it up">
+              <button type="button" class="btn btn-sm" id="show-wrong" aria-pressed="false">Show the riddle’s sum</button>
+              <button type="button" class="btn btn-sm" id="show-right" aria-pressed="false">Show where the money is</button>
+            </div>
+          </div>
+
+          <div class="card lab-panel">
+            <h3>Change the numbers</h3>
+            <p style="margin: 0; color: var(--ink-2)">
+              If the “missing dollar” were real, it would stay the same. Instead it changes with every tweak, and can even
+              turn into an extra dollar. That’s the sign of a sum that means nothing.
+            </p>
+            <div class="controls">
+              <label class="field">
+                <span class="field-label">Real price of the room <output id="price-out" for="price"></output></span>
+                <input id="price" type="range" min="20" max="29" step="1" value="25" />
+              </label>
+              <label class="field">
+                <span class="field-label">Bellhop keeps <output id="kept-out" for="kept"></output></span>
+                <input id="kept" type="range" min="0" max="5" step="0.5" value="2" />
+              </label>
+            </div>
+            <div class="sums">
+              <div class="sum is-wrong">
+                <span class="sum-label">The riddle’s sum</span>
+                <span class="sum-math" id="wrong-math"></span>
+                <span class="sum-note" id="wrong-note"></span>
+              </div>
+              <div class="sum is-right">
+                <span class="sum-label">Where the $30 really is</span>
+                <span class="sum-math" id="right-math"></span>
+                <span class="sum-note">Always exactly $30.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div data-explainer></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🪙</span>
+            <h3>Follow the money</h3>
+            <p>At the end, the hotel has $25, the bellhop has $2 and the friends have $3 back. That’s all $30, every coin accounted for.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🔁</span>
+            <h3>The $2 got counted twice</h3>
+            <p>The $27 the friends paid already includes the bellhop’s $2. Adding the $2 on top counts it a second time.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🎩</span>
+            <h3>A sleight of hand with words</h3>
+            <p>The riddle sounds like careful bookkeeping, but it compares $29 with $30 for no reason. Nothing says those two numbers should match.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Missing_dollar_riddle">Missing dollar riddle</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Mathematical_fallacy">Mathematical fallacies</a> <span class="src">· Wikipedia (more “proofs” with a hidden flaw)</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

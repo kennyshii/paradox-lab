@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hilbert’s Infinite Hotel · Paradox Lab</title>
+    <meta name="description" content="Run Hilbert's infinite hotel: fit a new guest, a coach, and an infinite bus into a hotel that is already full." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
+    <script src="../../assets/js/theme-init.js"></script>
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="main.js" blocking="render"></script>
+  </head>
+  <body data-slug="infinite-hotel">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header data-site-header></header>
+
+    <main id="main" class="container">
+      <header data-paradox-hero></header>
+
+      <section class="paradox-section statement prose" aria-labelledby="statement-h">
+        <h2 id="statement-h"><span class="step-num">01</span> The paradox</h2>
+        <p>
+          Imagine a hotel with infinitely many rooms, numbered 1, 2, 3 and on forever. Tonight every single room is
+          taken. A traveller walks in and asks for a room. Any normal hotel would say “Sorry, we’re full.” But this
+          isn’t a normal hotel. Can the manager find the traveller a bed without throwing anyone out?
+        </p>
+      </section>
+
+      <section class="paradox-section guess card" data-guess data-answer="infinite" aria-labelledby="guess-h">
+        <h2 id="guess-h"><span class="step-num">02</span> Make a guess</h2>
+        <form>
+          <fieldset>
+            <legend>The hotel is completely full. Can it take more guests?</legend>
+            <div class="guess-options">
+              <label class="guess-option" data-feedback="That’s how every real hotel works. Infinity plays by different rules.">
+                <input type="radio" name="guess" value="no" /> <span>No. Full means full.</span>
+              </label>
+              <label class="guess-option" data-feedback="Close! It can do one guest, but it can do far more than that.">
+                <input type="radio" name="guess" value="one" /> <span>Maybe one guest, with some shuffling, but no more.</span>
+              </label>
+              <label class="guess-option">
+                <input type="radio" name="guess" value="infinite" /> <span>Yes, even infinitely many new guests.</span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="btn-row">
+            <button type="submit" class="btn btn-primary">Lock in my guess</button>
+            <button type="button" class="btn btn-ghost" data-skip>Skip, just show me</button>
+          </div>
+        </form>
+        <p hidden data-answer-text>
+          The full hotel can always make room: for one guest, for five, even for a bus with infinitely many passengers.
+          Nobody has to leave; everybody just moves. Try it below.
+        </p>
+        <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="paradox-section" aria-labelledby="lab-h">
+        <h2 id="lab-h"><span class="step-num">03</span> Explore</h2>
+        <div class="lab">
+          <div class="card lab-panel">
+            <div class="btn-row" role="group" aria-label="Who arrives?" id="plans"></div>
+            <div class="stage corridor-stage" id="corridor">
+              <div class="stage-hud">
+                <div><span>Guests checked in</span><strong id="hud-guests">∞</strong></div>
+                <div style="text-align: right"><span>Empty rooms</span><strong id="hud-free">0</strong></div>
+              </div>
+            </div>
+            <p class="viz-caption" id="rule" aria-live="polite">Every room is taken. Pick who arrives, then watch the manager make room. Drag the corridor to walk along it.</p>
+            <div class="controls">
+              <label class="field">
+                <span class="field-label">Walk down the corridor <output id="walk-out" for="walk"></output></span>
+                <input id="walk" type="range" min="0" max="120" step="0.1" value="0" />
+              </label>
+              <label class="field">
+                <span class="field-label">Ask any guest: “Which room were you in?”</span>
+                <input id="ask" class="ask-input" type="number" min="1" step="1" value="1000000" inputmode="numeric" />
+              </label>
+            </div>
+            <p class="ask-answer callout" id="ask-out" aria-live="polite"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-ghost" id="reset">Reset to a full hotel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
+        <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
+        <div data-explainer></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🚪</span>
+            <h3>Nobody is ever homeless</h3>
+            <p>Every guest is told exactly which room to move to, and there is always a next room. No one falls off the end, because there is no end.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">♾️</span>
+            <h3>“Full” isn’t “no room”</h3>
+            <p>In a finite hotel, full means every room is used up. In an infinite one, you can be full and still make space by shuffling everyone along.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🧮</span>
+            <h3>Infinity isn’t a big number</h3>
+            <p>Add one, add five, even double it: the hotel is still exactly as full. Infinity behaves like a different kind of thing, not just a very large count.</p>
+          </li>
+        </ul>
+      </section>
+
+      <section class="paradox-section reading prose" aria-labelledby="reading-h">
+        <h2 id="reading-h"><span class="step-num">05</span> Further reading</h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Hilbert%27s_paradox_of_the_Grand_Hotel">Hilbert’s paradox of the Grand Hotel</a> <span class="src">· Wikipedia</span></li>
+          <li><a href="https://www.youtube.com/watch?v=Uj3_KqkI9Zo">The Infinite Hotel Paradox</a> <span class="src">· TED-Ed (video)</span></li>
+          <li><a href="https://en.wikipedia.org/wiki/Countable_set">Countable sets</a> <span class="src">· Wikipedia (the idea behind “every guest gets a room”)</span></li>
+        </ul>
+      </section>
+
+      <nav data-pager></nav>
+    </main>
+
+    <footer data-site-footer></footer>
+  </body>
+</html>

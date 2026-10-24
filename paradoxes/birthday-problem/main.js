@@ -5,6 +5,8 @@ import { runTrials } from "../../assets/js/lib/sim.js";
 import { fmt, pct } from "../../assets/js/lib/format.js";
 import { stageCanvas, countTo } from "../../assets/js/lib/fx.js";
 import { pShared, pSharesMine, pairs, sampleGroup } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -283,3 +285,5 @@ bindRange($("#n"), {
     else renderWebHud();
   },
 });
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

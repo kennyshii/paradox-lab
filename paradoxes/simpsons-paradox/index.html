@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="simpsons-paradox">
@@ -98,43 +95,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Overall rates are weighted averages</h3>
-          <p>
-            An arm’s overall rate is the average of its group rates, weighted by how many of its cases fall in each group:
-          </p>
-          $$r_{\text{overall}} = \sum_g w_g\, r_g, \qquad w_g = \frac{n_g}{\sum_h n_h}.$$
-          <p>
-            Treatment A beats B within each group (\(93\% > 87\%\) and \(73\% > 69\%\)). But 75% of A’s patients had
-            large stones, versus 23% of B’s:
-          </p>
-          $$r_A = 0.25 \times 0.93 + 0.75 \times 0.73 \approx 0.78, \qquad r_B = 0.77 \times 0.87 + 0.23 \times 0.69 \approx 0.83.$$
-          <p>
-            The weights differ, so “better in every group” doesn’t carry over. The group (stone size) is a
-            <em>confounder</em>: it affects both which treatment you get and how likely you are to succeed.
-          </p>
-
-          <h3>The fair comparison</h3>
-          <p>
-            Giving both arms the same mix of cases (direct standardisation) removes the confounding and restores A’s
-            advantage. Tick “Compare fairly” in the lab to see it.
-          </p>
-
-          <h3>Berkeley</h3>
-          <p>
-            In 1973, men were admitted at 44% and women at 30%. Yet within departments, women did as well or better in
-            most cases: women had applied mostly to highly competitive departments with low admission rates for everyone.
-            The aggregate gap reflected <em>where</em> people applied, which raises its own questions, rather than
-            departments favouring men.
-          </p>
-
-          <h3>Why it’s veridical</h3>
-          <p>
-            The arithmetic is correct and the data are real. The lesson is practical: which table is right, the
-            aggregated or the split one, depends on the causal story. Here the split table answers “which treatment is
-            better for a given patient?”, but there are other datasets where aggregating is correct.
-          </p>
-        </div>
+        <div data-explainer data-title="Simpson’s paradox, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🧪</span>
+            <h3>Better in every group</h3>
+            <p>Treatment A really did better for small stones and for large stones. Nothing about that is fake.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">⚖️</span>
+            <h3>But the groups were lopsided</h3>
+            <p>A was mostly given the hard cases. B was mostly given easy ones. Totals mix those very different situations together.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🔍</span>
+            <h3>Compare like with like</h3>
+            <p>When the mix of cases differs, the overall total can point the wrong way. Always ask how each group was made up.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

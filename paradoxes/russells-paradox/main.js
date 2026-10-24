@@ -3,6 +3,8 @@ import { $, $$, h, segmented } from "../../assets/js/lib/dom.js";
 import { barberShaves, testBarber, russellRow, testRussell } from "./model.js";
 import { stageCanvas } from "../../assets/js/lib/fx.js";
 import { prefersReducedMotion } from "../../assets/js/lib/sim.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -251,8 +253,8 @@ function renderMembership() {
   const selfMembers = contains.map((row, i) => (row[i] ? NAMES[i] : null)).filter(Boolean);
   $("#diag-note").innerHTML =
     highlight == null
-      ? `<p>Self-members right now: <strong>${selfMembers.join(", ") || "none"}</strong>. So \\(R\\) contains exactly the others: <strong>${NAMES.filter((_, j) => r[j]).join(", ") || "none"}</strong>. Click a “differs at” button to see why \\(R\\) can’t be any row.</p>`
-      : `<p><strong>${NAMES[highlight]}</strong> ${contains[highlight][highlight] ? "contains" : "does not contain"} itself, so \\(R\\) ${r[highlight] ? "contains" : "does not contain"} <strong>${NAMES[highlight]}</strong>. They disagree on the diagonal cell, so \\(R\\) ≠ ${NAMES[highlight]}. This happens for every row, whatever you click.</p>`;
+      ? `<p>Self-members right now: <strong>${selfMembers.join(", ") || "none"}</strong>. So R contains exactly the others: <strong>${NAMES.filter((_, j) => r[j]).join(", ") || "none"}</strong>. Click a “differs at” button to see why R can’t be any row.</p>`
+      : `<p><strong>${NAMES[highlight]}</strong> ${contains[highlight][highlight] ? "contains" : "does not contain"} itself, so R ${r[highlight] ? "contains" : "does not contain"} <strong>${NAMES[highlight]}</strong>. They disagree on the diagonal cell, so R ≠ ${NAMES[highlight]}. This happens for every row, whatever you click.</p>`;
   renderMath($("#diag-note"));
 }
 
@@ -272,11 +274,13 @@ $$("[data-r]").forEach((b) =>
     $$("[data-r]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     $("#r-result").className = "callout is-bad";
     $("#r-result").innerHTML = t.assumed
-      ? "<p><strong>Contradiction.</strong> If \\(R \\in R\\), then \\(R\\) is a set that contains itself, and \\(R\\) only contains sets that <em>don’t</em>. So \\(R \\notin R\\).</p>"
-      : "<p><strong>Contradiction.</strong> If \\(R \\notin R\\), then \\(R\\) is a set that doesn’t contain itself, which is exactly what qualifies a set for \\(R\\). So \\(R \\in R\\).</p><p>The cell \\((R, R)\\) must equal its own opposite. <strong>\\(R\\) cannot exist.</strong></p>";
+      ? "<p><strong>Contradiction.</strong> If R contains itself, then R is a collection that contains itself, but R only holds collections that <em>don’t</em>. So R can’t contain itself.</p>"
+      : "<p><strong>Contradiction.</strong> If R doesn’t contain itself, then it’s exactly the kind of collection R is supposed to hold. So it does contain itself.</p><p>The cell (R, R) would have to equal its own opposite. <strong>R cannot exist.</strong></p>";
     renderMath($("#r-result"));
   }),
 );
 
 renderVillage();
 renderMembership();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="monty-hall">
@@ -99,44 +96,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Your first pick is stuck at 1/3</h3>
-          <p>
-            When you pick, the car is behind your door with probability \(1/3\) and behind one of the other two with
-            probability \(2/3\). The host’s reveal can’t change where the car already is. More importantly, it gives
-            you no information about <em>your</em> door: whatever you picked, he can always find a goat to show you.
-          </p>
-          $$P(\text{car behind your door} \mid \text{host opens a goat}) = P(\text{car behind your door}) = \tfrac{1}{3}.$$
-          <p>
-            Since the car must be behind one of the two closed doors, the other one gets everything else:
-          </p>
-          $$P(\text{win by switching}) = 1 - \tfrac{1}{3} = \tfrac{2}{3}.$$
-
-          <h3>Switching = taking both other doors</h3>
-          <p>
-            Another way to see it: switching is equivalent to being allowed to open <em>both</em> of the doors you
-            didn’t pick. The host just opened the empty one for you. Two doors beat one.
-          </p>
-
-          <h3>The 100-door version</h3>
-          <p>
-            With \(n\) doors, the host opens \(n-2\) goats and leaves one other door closed. Your original pick is
-            still right only \(1/n\) of the time, so switching wins
-          </p>
-          $$P(\text{switch wins}) = \frac{n-1}{n}.$$
-          <p>
-            With 100 doors, you picked door 37 and the host carefully avoided opening door 82 out of 98 others. Door 82
-            is now very suspicious: it is right 99% of the time.
-          </p>
-
-          <h3>The crucial assumption</h3>
-          <p>
-            The answer depends on the host <em>always</em> opening a goat door and <em>always</em> offering the switch.
-            If he opened a random door that just happened to show a goat, it really would be 50/50. That hidden rule is
-            why the puzzle fooled so many people when Marilyn vos Savant published it in 1990, but with the standard
-            rules, the 2/3 answer is simply correct.
-          </p>
-        </div>
+        <div data-explainer data-title="The Monty Hall problem, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🚪</span>
+            <h3>Your first pick is stuck at 1 in 3</h3>
+            <p>When you choose, you have a 1 in 3 chance. The host opening a goat door doesn’t change that, because he can always find a goat to show you.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">➡️</span>
+            <h3>The rest moves to the other door</h3>
+            <p>The other two doors held a 2 in 3 chance together. Once one is shown to be a goat, that whole chance sits on the door he left closed.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">💯</span>
+            <h3>Picture 100 doors</h3>
+            <p>Pick 1 of 100, and the host opens 98 goats, skipping just one door. That door he avoided is almost certainly the car. Three doors work the same way, just less dramatically.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

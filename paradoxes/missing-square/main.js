@@ -4,6 +4,8 @@ import { svg } from "../../assets/js/lib/chart.js";
 import { tween } from "../../assets/js/lib/sim.js";
 import { fmt } from "../../assets/js/lib/format.js";
 import { WIDTH, HEIGHT, PIECES, HOLE, SLIVERS, area, placed } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -180,3 +182,5 @@ board.addEventListener("pointerleave", () => stageBox.classList.remove("is-lensi
 
 renderTable();
 draw();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });

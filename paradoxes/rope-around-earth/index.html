@@ -8,11 +8,8 @@
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml" />
     <script src="../../assets/js/theme-init.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="style.css" />
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
     <script type="module" src="main.js" blocking="render"></script>
   </head>
   <body data-slug="rope-around-earth">
@@ -59,7 +56,7 @@
           </div>
         </form>
         <p hidden data-answer-text>
-          The gap is \(1/2\pi\) metres, about <strong>15.9 cm</strong>, and it is the same for a basketball, the Earth
+          The gap is about <strong>16 cm</strong> (one metre divided by roughly six), and it is the same for a basketball, the Earth
           or the Sun. Pulled up at a single point, the same metre lifts the Earth rope about <strong>121 m</strong>.
         </p>
         <div class="guess-result" data-guess-result role="status" aria-live="polite"></div>
@@ -115,46 +112,24 @@
 
       <section class="paradox-section why" id="why" data-reveal aria-labelledby="why-h">
         <h2 id="why-h"><span class="step-num">04</span> Why it works</h2>
-        <div class="prose">
-          <h3>Lifting evenly</h3>
-          <p>
-            A rope hugging a sphere of radius \(R\) has length \(C = 2\pi R\). Add \(\Delta L\) and lift it evenly to
-            height \(h\): it now forms a circle of radius \(R + h\), so
-          </p>
-          $$2\pi (R + h) = 2\pi R + \Delta L \quad\Longrightarrow\quad h = \frac{\Delta L}{2\pi}.$$
-          <p>
-            \(R\) cancels completely. For \(\Delta L = 1\text{ m}\), \(h = 1/2\pi \approx 0.159\text{ m}\) around a
-            basketball, the Earth, or the Sun. Our intuition compares the extra metre with the
-            <em>circumference</em> (one part in 40 million) and expects a tiny gap. But the gap is measured against the
-            <em>radius</em>, and circumference and radius grow together: every extra metre of radius always costs
-            exactly \(2\pi\) metres of rope.
-          </p>
-
-          <h3>Pulling up at one point</h3>
-          <p>
-            Now keep the rope on the ground everywhere except near one point, which you lift until the rope is taut.
-            The rope leaves the sphere along two tangent lines that touch it at angle \(\theta\) either side of the
-            peak. Each tangent has length \(R\tan\theta\), and it replaces an arc of length \(R\theta\). The extra rope
-            used is therefore
-          </p>
-          $$\Delta L = 2R(\tan\theta - \theta), \qquad h = R\left(\sec\theta - 1\right).$$
-          <p>
-            For small angles \(\tan\theta - \theta \approx \theta^3/3\) and \(\sec\theta - 1 \approx \theta^2/2\), so
-          </p>
-          $$\theta \approx \left(\frac{3\,\Delta L}{2R}\right)^{1/3}, \qquad h \approx \frac{R}{2}\left(\frac{3\,\Delta L}{2R}\right)^{2/3} \propto R^{1/3}\,\Delta L^{2/3}.$$
-          <p>
-            For the Earth (\(R = 6{,}371\text{ km}\)) and one metre of rope, \(\theta \approx 0.35^\circ\) and
-            \(h \approx 121\text{ m}\): taller than the Statue of Liberty. This time the radius does matter, but only
-            as a cube root. The lab solves the exact equation numerically rather than using the approximation.
-          </p>
-
-          <h3>Why it’s veridical</h3>
-          <p>
-            Nothing in the argument is fishy. Both results are straightforward geometry, and you can check them with a
-            string and a ball. The surprise is entirely in our intuition, which reasons about the proportion
-            \(\Delta L / C\) instead of the absolute change.
-          </p>
-        </div>
+        <div data-explainer data-title="The rope around the Earth, explained"></div>
+        <ul class="idea-cards">
+          <li>
+            <span class="idea-icon" aria-hidden="true">🌍</span>
+            <h3>A circle’s length follows its size</h3>
+            <p>Make a circle a little wider and its length grows by about six times as much. That’s true for every circle, tiny or huge.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">✂️</span>
+            <h3>One metre buys a sixth of a metre</h3>
+            <p>Lifting the rope by some amount needs about six times that much extra rope. So one extra metre lifts it about 16 cm.</p>
+          </li>
+          <li>
+            <span class="idea-icon" aria-hidden="true">🤔</span>
+            <h3>Why it feels wrong</h3>
+            <p>We compare one metre with 40,000 km and decide it’s nothing. But the gap only depends on the extra rope, not on how big the planet is.</p>
+          </li>
+        </ul>
       </section>
 
       <section class="paradox-section reading prose" aria-labelledby="reading-h">

@@ -34,8 +34,9 @@ Then:
 2. **`index.html`**: set `<body data-slug="<slug>">`, the `<title>` and meta description, then fill in the five sections.
 3. **`model.js`**: the maths, as small exported pure functions.
 4. **`main.js`**: call `mountPage()`, then wire controls to the model and draw.
-5. **`thumb.svg`**: a 320×180 card image. Use a dark tinted background so it looks good in both themes.
-6. **`tests/<slug>.test.js`**: test the model, especially the numbers quoted in the explanation.
+5. **`explainer.js`**: the scenes of the explainer video. Each scene is one caption plus a `draw()` function; keep captions short and math-free.
+6. **`thumb.svg`**: a 640×360 card image. Use a dark tinted background so it looks good in both themes.
+7. **`tests/<slug>.test.js`**: test the model, especially the numbers quoted in the explanation.
 
 ### Page checklist
 
@@ -44,7 +45,7 @@ Every paradox page must have, in this order:
 - [ ] **The paradox**: one paragraph stating it, ending on the question that makes it feel wrong
 - [ ] **Make a guess**: a `[data-guess]` form with `data-answer` set to the correct option’s value; wrong options can have `data-feedback`; a hidden `[data-answer-text]` with the short answer
 - [ ] **Explore**: the interactive visualisation
-- [ ] **Why it works**: `[data-reveal]` section with the maths or logic (KaTeX: `$$…$$` for display, `\(…\)` inline) and a closing “Why it’s *type*” paragraph
+- [ ] **Why it works**: `[data-reveal]` section with an explainer video (`explainer.js` in your folder: 5–8 scenes, one idea and one caption each) and three `idea-cards` in plain language. **No equations**: explain the concept, not the algebra
 - [ ] **Type badge and reason**: generated automatically from the registry
 - [ ] **Further reading**: 2–4 reputable links (Wikipedia, Stanford Encyclopedia of Philosophy, papers, well-known videos)
 
@@ -59,6 +60,7 @@ Every paradox page must have, in this order:
 | `assets/js/lib/dom.js` | `h()` element builder, `bindRange`, `segmented` toggle groups, `storage` |
 | `assets/js/lib/format.js` | `pct`, `fmt`, `length`, `fraction` |
 | `assets/js/lib/fx.js` | `stageCanvas(box, { draw, animate })` for a HiDPI animated canvas inside a dark `.stage`; `morph(fn)` (view-transition DOM updates), `confetti(el)`, `countTo(el, n)` |
+| `assets/js/lib/explainer.js` | `explainer(el, { title, scenes })` captioned video player; drawing kit (`text`, `circle`, `rrect`, `arrow`, `person`, `tag`, `seg`, `ease`) |
 | `assets/js/lib/particles.js` | The home-page particle morph; add a silhouette for your paradox to `SHAPES` keyed by slug |
 
 ### Shared CSS components

@@ -3,6 +3,8 @@ import { $, h, segmented } from "../../assets/js/lib/dom.js";
 import { fmt, pct } from "../../assets/js/lib/format.js";
 import { stageCanvas, cssVar } from "../../assets/js/lib/fx.js";
 import { DATASETS, rate, pooled, mix, standardised, summarise } from "./model.js";
+import { explainer } from "../../assets/js/lib/explainer.js";
+import { scenes as explainerScenes } from "./explainer.js";
 
 mountPage();
 
@@ -309,3 +311,5 @@ segmented($("[data-dataset]"), {
 
 renderToggles();
 render();
+
+explainer($("[data-explainer]"), { title: $("[data-explainer]").dataset.title, scenes: explainerScenes });
